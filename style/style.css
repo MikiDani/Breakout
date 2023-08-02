@@ -1,0 +1,29 @@
+body{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background-color:#000;
+}
+
+#canvas-div{
+    border: 1px solid black;
+    background-color: gray;
+}
+
+.ball-rotate {
+    position: relative;
+    background-color: blue;
+    animation: rotate01 6s linear infinite;
+}
+
+@keyframes rotate01 {
+    0%{
+        transform: rotate(0deg);
+    }
+    50%{
+        transform: rotate(180deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
