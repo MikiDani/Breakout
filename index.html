@@ -6,14 +6,15 @@
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="style/style.css">
 </head>
-  <body class="bg-dark p-0 m-0">
-    <div class="container-fluid">
-      <div class="row">
+  <body class="bg-dark">
+    <div class="container-fluid mx-auto">
+      <div class="row p-0 m-0">
 
-        <img id="img1" src="images/clock.png" alt="img1" title="img1" style="display:none;">
+        <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
         <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball" style="display:none;">
 
-        <canvas class="p-0 m-0" id="canvas-div"></canvas>
+        <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
+        <canvas id="canvas-div" class="p-0 m-0 border border-primary"></canvas>
 
         <div id="info-div" class="row p-0 m-0 bg-danger p-3">Lorem</div>
 

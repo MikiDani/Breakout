@@ -16,3 +16,23 @@ this.ctx.fillStyle = "green";
 this.ctx.fill();
 
 this.ctx.drawImage(this.img1, 0, 0, 450, 450, 10, 10, 150, 150);
+
+function circleTest() {
+    var x1 = 300;
+    var y1 = 400;
+    var r =  50;
+    var theta = 5;
+  
+    this.ctx.moveTo(x1, y1);
+    this.ctx.lineTo(x1 + r * Math.cos(theta), y1 + r * Math.sin(theta));
+    this.ctx.stroke();
+  }
+  
+  canvasObj.circleTest()
+  
+  
+  
+  //this.ctx.rotate(myVar.n);
+  //this.ctx.save();
+  //this.ctx.rotate(1); // rotate
+  //this.ctx.restore(); // restore original states (no rotation etc)
