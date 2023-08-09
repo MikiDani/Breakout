@@ -1,25 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Canvas experiment</title>
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="style/style.css">
 </head>
   <body class="bg-dark">
-    <div class="container-fluid mx-auto">
-      <div class="row p-0 m-0">
+    <div id="display-menu" style="display:block;">
+      <div class="menu-bg d-flex justify-content-center align-items-center">
+        <div id="button-div" class="bg-success rounded px-3 shadow">Start</div>
+      </div>
+    </div>
+    <div id="display-game" style="display:none;">
+      <div class="container-fluid mx-auto">
+        <div class="row p-0 m-0">
+          <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
+          <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball" style="display:none;">
+          <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
 
-        <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
-        <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball" style="display:none;">
+          <canvas id="canvas-div" class="p-0 m-0 border border-black"></canvas>
 
-        <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
-        <canvas id="canvas-div" class="p-0 m-0 border border-primary"></canvas>
-        <div class="row p-0 m-0 footer bg-danger p-3 d-flex justify-content-center align-items-center">
-          <div id="info-div" class="col-6 d-inline-block">Lorem</div>
-          <div id="button-div" class="col-6 d-inline-block bg-success rounded w-25 text-center">Start</div>
+          <div class="row p-0 m-0 footer bg-danger p-3 d-flex justify-content-center align-items-center">
+            <div id="info-div" class="col-6 d-inline-block">Lorem</div>
+            <div id="volume-icon" class="sound-on"><img src="images/sound_icon-on.svg" alt="sound-icon"></div>
+          </div>
+
         </div>
-
       </div>
     </div>
     <div id="audios"></div>

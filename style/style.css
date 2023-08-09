@@ -5,6 +5,28 @@ body{
     background-color:#000;
 }
 
+#display-menu {
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: purple;
+}
+
+.menu-bg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000c;
+}
+
+#button-div {
+    text-align: center;
+    cursor: pointer;
+}
+
 #canvas-div {
     border: 1px solid black;
     background-color: gray;
@@ -15,6 +37,23 @@ body{
     position: relative;
     background-color: blue;
     animation: rotate01 6s linear infinite;
+}
+
+#volume-icon {
+    width: 3rem;
+    height: 3rem;
+}
+#volume-icon:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+.sound-on {
+    width: 100%;
+    background-image: url("images/sound_icon-on.svg");
+    color: white;
+    background-size: cover;
+    background-color: green;
 }
 
 @keyframes rotate01 {

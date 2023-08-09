@@ -1,4 +1,3 @@
-
 const log = console.log;
 
 window.globalVar = {}
@@ -98,6 +97,9 @@ class CanvasClass {
     }
 
     myResizer() {
+        $('#front-menu').css('width', window.innerWidth)
+        $('#front-menu').css('height', window.innerHeight)
+
         this.canvasWidth = (window.innerWidth < 1001) ? window.innerWidth : 1000;
 
         log(this.canvasWidth)
@@ -131,8 +133,7 @@ class CanvasClass {
         }
 
         if (object.name.includes('brick')) {
-            log('bent')
-            this.ctx.font = "16px Arial";
+            this.ctx.font = "16px Impact";
             this.ctx.fillStyle = "black";
             this.ctx.textAlign = "center";
             this.ctx.fillText(object.strong, object.x + (object.objWidth / 2), object.y + (object.objHeight / 2)+5);
@@ -141,19 +142,19 @@ class CanvasClass {
 
     deleteObj(object) {
         //this.ctx.clearRect(object.x, object.y, object.objWidth, object.objHeight);
+        if (object.name == 'ball') {
+            //log(object.x, object.y, Math.ceil(object.objWidth), Math.ceil(object.objHeight));
+            //game.stop()
+        }
 
-        log(object.x, object.y, Math.floor(object.objWidth), Math.ceil(object.objHeight))
-
-        //game.stop()
-
-        this.ctx.drawImage(this.canvasBg, object.x, object.y, object.objWidth, object.objHeight, object.x, object.y, object.objWidth, object.objHeight)
+        this.ctx.drawImage(this.canvasBg, object.x, object.y, Math.ceil(object.objWidth), Math.ceil(object.objHeight), object.x, object.y, Math.ceil(object.objWidth), Math.ceil(object.objHeight))
     }
 }
 
 class Game {
     constructor() {
         globalVar.n = 0
-        this.refreshTime = 25
+        this.refreshTime = 10
         this.infoDiv = $("#info-div")
         this.phase = true
         this.soundSwitch = true
@@ -176,9 +177,9 @@ class Game {
             { id: "ball2", src: "sounds/ball2.mp3" },
         ];
     
-        for (let attribute of audioElements) {
-            let audio = document.createElement('audio');
-            for (let key in attribute) {
+        for  (let attribute of audioElements) {
+            let  audio = document.createElement('audio');
+            for  (let key in attribute) {
                 audio.setAttribute(key, attribute[key]);
             }
             document.getElementById("audios").appendChild(audio);
@@ -186,6 +187,7 @@ class Game {
     }
     
     playAudio(soundname) {
+        log(this.soundSwitch)
         if (this.soundSwitch==true) {
             document.getElementById(soundname).play();
         }
@@ -197,8 +199,15 @@ class Game {
         let clone = this
 
         $('#button-div').on('click', function() {
+            
+            $('#display-menu').hide()
+            $('#display-game').show()
             // start repeat
             clone.start()
+        })
+
+        $('#volume-icon').on('click', function() {
+            clone.soundSwitch = !clone.soundSwitch
         })
 
         document.addEventListener('keydown', function(event) {
@@ -354,8 +363,8 @@ class Game {
     }
 
     drawBricks() {
-        for(var n = 0; n < globalVar.tableX; n++) {
-            for(var m = 0; m < globalVar.tableY; m++) {
+        for (var n = 0; n < globalVar.tableX; n++) {
+            for (var m = 0; m < globalVar.tableY; m++) {
                 if (globalVar.brickTable[n][m] != null) {
                     canvasObj.drawObj(globalVar.brickTable[n][m])
                 }
@@ -368,8 +377,8 @@ class Game {
 
         canvasObj.deleteObj(ball)
 
-        for(var n = 0; n < globalVar.tableX; n++) {
-            for(var m = 0; m < globalVar.tableY; m++) {
+        for (var n = 0; n < globalVar.tableX; n++) {
+            for (var m = 0; m < globalVar.tableY; m++) {
                 if (globalVar.checkPass) {
                     if (globalVar.brickTable[n][m] != null) {
                         this.brickCheck(globalVar.brickTable[n][m])
@@ -391,16 +400,15 @@ class Game {
 }
 
 function createBrickTable() {
-
     globalVar.brickTable = new Array(globalVar.tableX);
     for (var i = 0; i < globalVar.brickTable.length; i++) {
         globalVar.brickTable[i] = new Array(globalVar.tableY);
     }
     
-    for(var n = 0; n < globalVar.tableX; n++) {
-        for(var m = 0; m < globalVar.tableY; m++) {
+    for (var n = 0; n < globalVar.tableX; n++) {
+        for (var m = 0; m < globalVar.tableY; m++) {
 
-            let randomColor = randomNumber(0,1)
+            let randomColor = randomNumber(0,4)
             let brickColor
             let brickStrong
             if (randomColor == 0) { brickColor = 'green'; brickStrong = 1 }
@@ -411,8 +419,8 @@ function createBrickTable() {
 
             globalVar.brickTable[n][m] = new Brick({
                 name: 'brick[' + n + '][' + m + ']',
-                x: Math.floor((canvasObj.canvasWidth / globalVar.tableX) * n),
-                y: Math.ceil((canvasObj.canvasWidth / 16) * m),
+                x: Math.floor((canvasObj.canvasWidth / globalVar.tableX)) * n,
+                y: Math.ceil((canvasObj.canvasWidth / 16)) * m,
                 objWidth:  Math.floor((canvasObj.canvasWidth / globalVar.tableX)),
                 objHeight: Math.ceil((canvasObj.canvasWidth / 16)),
                 fillType: 'color',
@@ -421,10 +429,12 @@ function createBrickTable() {
                 tableX: n,
                 tableY: m,
             });
+            log('---'+ globalVar.brickTable[n][m].name)
             log(globalVar.brickTable[n][m].objWidth)
             log(globalVar.brickTable[n][m].objHeight)
             log(globalVar.brickTable[n][m].x)
             log(globalVar.brickTable[n][m].y)
+            log('---');
         }
     }
     
@@ -444,7 +454,7 @@ const ball = new Ball({
     objWidth: (canvasObj.canvasWidth / 10),
     objHeight: (canvasObj.canvasWidth / 10),
     fillType: 'img',
-    step: 5
+    step: 2
 })
 
 let playerThick = 15
@@ -471,6 +481,17 @@ $(window).on("resize", function() {
 
     delete window.player;
     delete window.brick;
+
+    for  (var n = 0; n < globalVar.tableX; n++) {
+        for   (var m = 0; m < globalVar.tableY; m++) {
+            if  (globalVar.brickTable[n][m] !== null) {
+                globalVar.brickTable[n][m].x = Math.floor((canvasObj.canvasWidth / globalVar.tableX)) * n
+                globalVar.brickTable[n][m].y = Math.ceil((canvasObj.canvasWidth / 16)) * m
+                globalVar.brickTable[n][m].objWidth = Math.floor((canvasObj.canvasWidth / globalVar.tableX))
+                globalVar.brickTable[n][m].objHeight = Math.ceil((canvasObj.canvasWidth / 16))
+            }
+        }
+    }
 
     canvasObj.drawBg()
 
