@@ -182,7 +182,7 @@ class Game {
             step: 4
         })
         
-        let playerThick = Math.ceil((canvasObj.canvasHeight / 50))
+        let playerThick = Math.ceil((canvasObj.canvasHeight / 40))
         let playerSpace = Math.ceil((canvasObj.canvasHeight / 25))
         let playerLong = Math.ceil((canvasObj.canvasWidth / 6))
         
@@ -410,70 +410,46 @@ class Game {
             if (playerMove) {
 
                 canvasObj.deleteObj(this.ball)
-                log('test')
 
                 let xDistance = this.ball.x - object.x
                 let xHalfLong = (object.objWidth / 2) - (this.ball.objWidth / 2)
-                
-                log('X: --')
-                log(xDistance)
-                log(xHalfLong)
-                log('--')
-                
+                                
                 if (xHalfLong > xDistance) {
-                    log('x elso fele')
-                    
-                    this.ball.x = object.x - this.ball.objWidth
+                    //log('x elso fele')
+                    let newCordinateX = object.x - this.ball.objWidth - 1
 
-                    this.ball.moveX = -this.ball.step
-
+                    if (newCordinateX >= 0) {
+                        this.ball.x = newCordinateX
+                        this.ball.moveX = -this.ball.step
+                    }
                 } else {
-                    log('x második fele')
+                    //log('x második fele')
+                    let newCordinateX = object.x + object.objWidth + 1
 
-                    this.ball.x = object.x + object.objWidth
-
-                    this.ball.moveX = this.ball.step
+                    if ((canvasObj.canvasWidth - this.ball.objWidth) >= (newCordinateX)) {
+                        this.ball.x = newCordinateX
+                        this.ball.moveX = this.ball.step
+                    }
                 }
-
-                log('ball.moveX: ' + this.ball.moveX)
-                log('this.ball.x: ' + this.ball.x)
 
                 let yDistance = this.ball.y - object.y
                 let yHalfLong = (object.objHeight / 2)
 
-                log('Y: --')
-                log(yDistance)
-                log(yHalfLong)
-                log('--')
-                
                 if (yHalfLong > yDistance) {
-                    log('y elso fele')
-                    
+                    //log('y elso fele')
                     this.ball.y = object.y - this.ball.objHeight
-
                     this.ball.moveY = -this.ball.step
                 
-                    // max min, és max max megírása
-
                 } else {
-                    log('y második fele')
-
+                    //log('y második fele')
                     this.ball.y = object.y + object.objHeight
-
                     this.ball.moveY = this.ball.step
-
                 }
-                log('ball.moveY: ' + this.ball.moveY)
-                log('this.ball.y: ' + this.ball.y)
 
                 this.player.ghostMode = true
 
                 canvasObj.drawObj(this.ball)
-
-                log('')
-                game.stop()
             }
-
         }
     }
 
@@ -522,7 +498,6 @@ class Game {
             }
         }
 
-
         log(this.player.ghostMode)
         if (this.player.ghostMode) {
             
@@ -532,7 +507,7 @@ class Game {
 
         } else {
             game.checkCrash(game.player)
-            canvasObj.drawObj(game.player)   // Máshogy lehet?
+            //canvasObj.drawObj(game.player)   // Máshogy lehet?
         }
 
         globalVar.checkPass = true
