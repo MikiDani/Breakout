@@ -25,6 +25,9 @@ body{
 #button-div {
     text-align: center;
     cursor: pointer;
+    width: 20vw;
+    height: 3vh;
+    min-height: 1.7rem;
 }
 
 #canvas-div {
