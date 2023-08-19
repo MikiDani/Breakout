@@ -3,6 +3,11 @@ body{
     margin: 0;
     padding: 0;
     background-color:#000;
+
+    // select off
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #display-menu {
@@ -22,7 +27,7 @@ body{
     background-color: #000c;
 }
 
-#button-div {
+#button-start {
     text-align: center;
     cursor: pointer;
     width: 20vw;

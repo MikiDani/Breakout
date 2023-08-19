@@ -2,7 +2,7 @@ const log = console.log;
 
 window.globalVar = {}
 globalVar.brickTable = []
-globalVar.tableX = 6
+globalVar.tableX = 8
 globalVar.tableY = 24
 globalVar.checkPass = true
 
@@ -55,7 +55,6 @@ class Player extends Objects {
         this.step = step
         this.firstWayX = false
         this.firstWayY = false
-        this.ghostMode = false
     }
 }
 
@@ -148,17 +147,7 @@ class CanvasClass {
 
     deleteObj(object) {
         //this.ctx.clearRect(object.x, object.y, object.objWidth, object.objHeight);
-        
-        //log('object.objWidth')
-        //log(object.objWidth)
-        //log(Math.floor(object.objWidth))
-        
-        //log('----')
-        
-        //log('object.objHeight')
-        //log(object.objHeight)
-        //log(Math.ceil(object.objHeight))
-        
+               
         this.ctx.drawImage(this.canvasBg, object.x, object.y, object.objWidth, object.objHeight, object.x, object.y, object.objWidth, object.objHeight);
 
     }
@@ -167,6 +156,7 @@ class CanvasClass {
 class Game {
     constructor() {
         globalVar.n = 0
+        globalVar.menuSwitch = true
         this.refreshTime = 10
         this.infoDiv = $("#info-div")
         this.phase = true
@@ -179,8 +169,14 @@ class Game {
             x: Math.ceil((canvasObj.canvasWidth / 2)-(canvasObj.canvasWidth / 20)),
             y: Math.ceil(canvasObj.canvasHeight - (2*(canvasObj.canvasWidth / 20))),
             fillType: 'img',
-            step: 4
+            step: 3
         })
+
+        log(semmi)
+
+        //log(this.ball)
+        log(this.ball.x)
+        log(this.ball.y)
         
         let playerThick = Math.ceil((canvasObj.canvasHeight / 40))
         let playerSpace = Math.ceil((canvasObj.canvasHeight / 25))
@@ -189,12 +185,12 @@ class Game {
         this.player = new Player({
             name: 'player',
             color: 'orange',
-            x: (canvasObj.canvasWidth / 2) - (playerLong / 2)-50,
+            x: (canvasObj.canvasWidth / 2) - (playerLong / 2)-250,
             y: (canvasObj.canvasHeight) - (playerSpace + playerThick),
             objWidth: playerLong,
             objHeight: playerThick,
             fillType: 'color',
-            step: 10
+            step: 5
         })
 
         this.soundLoad()
@@ -214,6 +210,13 @@ class Game {
         let audioElements = [ 
             { id: "ball1", src: "sounds/ball1.mp3" },
             { id: "ball2", src: "sounds/ball2.mp3" },
+            { id: "wall", src: "sounds/wall.mp3" },
+            { id: "gift", src: "sounds/gift.mp3" },
+            { id: "pop", src: "sounds/pop.mp3" },
+            { id: "pick1", src: "sounds/pick1.mp3" },
+            { id: "pick2", src: "sounds/pick2.mp3" },
+            { id: "menu1", src: "sounds/menu1.mp3" },
+            { id: "menu2", src: "sounds/menu2.mp3" },
         ];
     
         for  (let attribute of audioElements) {
@@ -230,12 +233,12 @@ class Game {
             document.getElementById(soundname).play();
         }
     }
-
+    
     myAddEventListeners() {
         let clone = this
 
-        $('#button-div').on('click', function() {
-            
+        $('#button-start').on('click', function() {
+            globalVar.menuSwitch = false
             $('#display-menu').hide()
             $('#display-game').show()
             // start repeat
@@ -246,7 +249,35 @@ class Game {
             clone.soundSwitch = !clone.soundSwitch
         })
 
-        document.addEventListener('keydown', function(event) {
+        var playerStep = this.player.step
+        var upper = (this.player.step * 4)
+        
+        $(document).on('keydown', {'clone': clone}, function(event) {
+
+            let clone = event.data.clone
+
+            log('first: ' + upper)
+
+            log('event.key: ' + event.key)
+
+            if (event.key == 'Enter') {
+                log('ENTER')
+                if (globalVar.menuSwitch) {
+                   clone.gameMode(clone)
+                }
+            }
+            
+            if (event.key == 'Escape') {
+                log('Escape')
+                if (globalVar.menuSwitch) {
+                    globalVar.menuSwitch = false
+                    clone.gameMode(clone)
+                } else {
+                    globalVar.menuSwitch = true
+                    clone.menuMode(clone)
+                }
+            }
+
             if (event.key == "e") {
                 log('STOP')
                 clone.stop()
@@ -260,27 +291,41 @@ class Game {
             }
 
             // RIGHT
-            if (event.keyCode == 39) {                
+            if (event.keyCode == 39) {    
+                
+                log(upper)
+
+                canvasObj.deleteObj(game.player)
+                
                 if (game.player.x + game.player.objWidth < canvasObj.canvasWidth) {
-                    canvasObj.deleteObj(game.player)
-                    game.player.x = game.player.x + game.player.step
-
-                    game.checkCrash(game.player, true)
-
-                    canvasObj.drawObj(game.player)
+                    game.player.x = game.player.x + upper                    
+                } else {
+                    game.player.x = canvasObj.canvasWidth - game.player.objWidth
+                    clone.playAudio('wall')
                 }
+
+                game.checkCrash(game.player, true)
+
+                canvasObj.drawObj(game.player)
             }
             
             // LEFT
             if (event.keyCode == 37) {
+
+                log(upper)
+
+                canvasObj.deleteObj(game.player)
+
                 if (game.player.x > game.player.step) {
-                    canvasObj.deleteObj(game.player)
-                    game.player.x = game.player.x - game.player.step
-
-                    game.checkCrash(game.player, true)
-
-                    canvasObj.drawObj(game.player)
+                    game.player.x = game.player.x - upper
+                } else {
+                    game.player.x = 0
+                    clone.playAudio('wall')
                 }
+                
+                game.checkCrash(game.player, true)
+                
+                canvasObj.drawObj(game.player)
             }
 
             // DOWN
@@ -303,35 +348,60 @@ class Game {
 
                 canvasObj.drawObj(game.player)
             }
+
+            upper = upper + playerStep
         });
+        document.addEventListener('keyup', function(event) {
+            upper = playerStep * 4
+        });
+
+    }
+
+    gameMode(clone) {
+        globalVar.menuSwitch = false
+        $('#display-menu').hide()
+        $('#display-game').show()
+        // start repeat
+        clone.start()
+        clone.playAudio('menu1')
+    }
+
+    menuMode(clone) {
+        globalVar.menuSwitch = true
+        $('#display-menu').show()
+        $('#display-game').hide()
+        // start repeat
+        clone.stop()
+        clone.playAudio('menu2')
     }
 
     ballMapEdgeController() {
+        let rand = randomNumber(0, 1)
+        let modifyValue = this.ball.step + rand
+
         if (this.ball.x > canvasObj.canvasWidth - this.ball.objWidth) {
-            this.ball.moveX = -this.ball.step
+            this.ball.moveX = -modifyValue
             this.playAudio('ball1')
         }
         
         if (this.ball.x < 0) {
-            this.ball.moveX = this.ball.step
+            this.ball.moveX = modifyValue
             this.playAudio('ball2')
         }
         
         if (this.ball.y > canvasObj.canvasHeight - this.ball.objHeight) {
-            this.ball.moveY = -this.ball.step
+            this.ball.moveY = -modifyValue
             this.playAudio('ball1')
         }
         
         if (this.ball.y < 0) {
-            this.ball.moveY = this.ball.step
+            this.ball.moveY = modifyValue
             this.playAudio('ball2')
         }
     }
 
     ballMove() {
-        //log('ballmove')
-        //log(this.ball.moveX)
-        //log(this.ball.moveY)
+
         this.ball.x = this.ball.x + this.ball.moveX
         this.ball.y = this.ball.y + this.ball.moveY
     }
@@ -381,6 +451,7 @@ class Game {
             object.firstWayY = false
         }
 
+        // crach
         if (this.checkY(this.ball, object) && this.checkX(this.ball, object)) {
 
             object.firstWayX = false
@@ -392,18 +463,31 @@ class Game {
 
             // Tégla esetén
             if (object.name == 'brick') {
-                object.strong = (nowX == true && nowY == true) ? object.strong : object.strong-1;  // sarok nem ér
+                object.strong = (nowX == true && nowY == true) ? object.strong : object.strong - 1;  // sarok nem ér
     
                 if (object.strong <= 0) {
                     canvasObj.deleteObj(object)
+
+                    // GIFT
+
                     globalVar.brickTable[object.tableX][object.tableY] = null
+                    this.playAudio('pop')
                 } else {
                     canvasObj.drawObj(object)
                 }
             }
 
-            if (nowX == true) { this.ball.moveX = -this.ball.moveX }
-            if (nowY == true) { this.ball.moveY = -this.ball.moveY }
+            let plussRandomMove = randomNumber(0, 1)    // Igy nam lesz jó talán
+               
+            if (nowX == true) { 
+                this.ball.moveX = -this.ball.moveX + plussRandomMove;
+                this.ball.x = this.ball.x + this.ball.moveX
+            }
+
+            if (nowY == true) {
+                this.ball.moveY = -this.ball.moveY + plussRandomMove;
+                this.ball.y = this.ball.y + this.ball.moveY
+            }
 
             globalVar.checkPass = false
 
@@ -437,16 +521,14 @@ class Game {
 
                 if (yHalfLong > yDistance) {
                     //log('y elso fele')
-                    this.ball.y = object.y - this.ball.objHeight
+                    this.ball.y = object.y - this.ball.objHeight - 1
                     this.ball.moveY = -this.ball.step
                 
                 } else {
                     //log('y második fele')
-                    this.ball.y = object.y + object.objHeight
+                    this.ball.y = object.y + object.objHeight + 1
                     this.ball.moveY = this.ball.step
                 }
-
-                this.player.ghostMode = true
 
                 canvasObj.drawObj(this.ball)
             }
@@ -497,18 +579,10 @@ class Game {
                 }
             }
         }
+        
+        game.checkCrash(game.player)
 
-        log(this.player.ghostMode)
-        if (this.player.ghostMode) {
-            
-            console.log('Most Ghost Mode')
-            this.player.ghostMode = false
-            //game.stop()
-
-        } else {
-            game.checkCrash(game.player)
-            //canvasObj.drawObj(game.player)   // Máshogy lehet?
-        }
+        //canvasObj.drawObj(game.player)   // Máshogy lehet?
 
         globalVar.checkPass = true
         
@@ -572,6 +646,8 @@ function createBrickTable() {
 // START //
 ///////////
 
+var semmi = 0
+
 window.mobileCheck = function() {
     let check = false;
     (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
@@ -589,19 +665,15 @@ window.mobileCheckResize = () => {
 }
 
 var canvasObj = new CanvasClass()
-
 createBrickTable()
-
-const game = new Game()
+var game = new Game()
 
 $(window).on("resize", function() {
 
-    canvasObj = new CanvasClass()
+    semmi++
 
-    window.mobileCheckResize()
-
-    delete window.player;
-    delete window.brick;
+    var canvasObj = new CanvasClass()
+    var game = new Game()
 
     for  (var n = 0; n < globalVar.tableX; n++) {
         for   (var m = 0; m < globalVar.tableY; m++) {
