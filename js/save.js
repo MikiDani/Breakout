@@ -125,3 +125,59 @@ if (bcY(brick.tableY-1)) {
   else { log('nulla lett!')}
 }
 
+//----
+
+    // DNY x- y+   1: x=0, y-1   2: x+1, y=0
+    if (this.checkMinus(this.ball.moveX) && this.checkPlus(this.ball.moveY)) {
+      if(this.checkNull(globalVar.brickTable[object.x][object.y-1]) && this.checkNull(globalVar.brickTable[object.x+1][object.y])) {
+          log('DNY törölhető!')
+          object.strong = object.strong - 1;
+      }
+  }
+  // ÉNY x- y-   1: x=+1, y=0   2: x=0, y=+1
+  if (this.checkMinus(this.ball.moveX) && this.checkMinus(this.ball.moveY)) {
+      if(this.checkNull(globalVar.brickTable[object.x+1][object.y]) && this.checkNull(globalVar.brickTable[object.x][object.y+1])) {
+          log('ÉNY törölhető!')
+          object.strong = object.strong - 1;
+      }
+  }
+  // ÉK x+ y-   1: x=-1, y=0   2: x=0, y=+1
+  if (this.checkPlus(this.ball.moveX) && this.checkMinus(this.ball.moveY)) {
+      if(this.checkNull(globalVar.brickTable[object.x-1][object.y]) && this.checkNull(globalVar.brickTable[object.x][object.y+1])) {
+          log('ÉK törölhető!')
+          object.strong = object.strong - 1;
+      }
+  }
+  // DK x+ y+   1: x=0, y-1   2: x-1, y=0
+  if (this.checkPlus(this.ball.moveX) && this.checkPlus(this.ball.moveY)) {
+      if(this.checkNull(globalVar.brickTable[object.x][object.y-1]) && this.checkNull(globalVar.brickTable[object.x-1][object.y])) {
+          log('DK törölhető!')
+          object.strong = object.strong - 1;
+      }
+  }
+
+  this.playAudio('fart');
+  this.stop()
+
+//---
+
+    // Kell ez ?
+
+  speedCount = () => {
+      if (this.phase == true) {
+          if (this.refreshTime<=200) {
+              this.refreshTime++
+          } else {
+              this.refreshTime--
+              this.phase = false
+          }
+      } else if (this.phase == false) {
+          if (this.refreshTime>=10) {
+              this.refreshTime--
+          } else {
+              this.refreshTime++
+              this.phase = true
+          }
+      }
+      log(this.refreshTime)
+  }

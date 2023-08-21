@@ -2,7 +2,7 @@ const log = console.log;
 
 window.globalVar = {}
 globalVar.brickTable = []
-globalVar.tableX = 8
+globalVar.tableX = 7
 globalVar.tableY = 24
 globalVar.checkPass = true
 
@@ -157,10 +157,12 @@ class Game {
     constructor() {
         globalVar.n = 0
         globalVar.menuSwitch = true
-        this.refreshTime = 10
+        this.refreshTime = 1
         this.infoDiv = $("#info-div")
         this.phase = true
         this.soundSwitch = false
+        this.stoping = false
+        this.lastway = null
 
         this.ball = new Ball({
             name: 'ball',
@@ -217,6 +219,7 @@ class Game {
             { id: "pick2", src: "sounds/pick2.mp3" },
             { id: "menu1", src: "sounds/menu1.mp3" },
             { id: "menu2", src: "sounds/menu2.mp3" },
+            { id: "fart", src: "sounds/fart.mp3" },
         ];
     
         for  (let attribute of audioElements) {
@@ -295,18 +298,11 @@ class Game {
                 
                 log(upper)
 
-                canvasObj.deleteObj(game.player)
-                
-                if (game.player.x + game.player.objWidth < canvasObj.canvasWidth) {
-                    game.player.x = game.player.x + upper                    
-                } else {
-                    game.player.x = canvasObj.canvasWidth - game.player.objWidth
-                    clone.playAudio('wall')
-                }
-
-                game.checkCrash(game.player, true)
+                clone.playerRight(upper, clone)
 
                 canvasObj.drawObj(game.player)
+
+                clone.lastway = 'right'
             }
             
             // LEFT
@@ -314,18 +310,9 @@ class Game {
 
                 log(upper)
 
-                canvasObj.deleteObj(game.player)
+                clone.playerLeft(upper, clone)
 
-                if (game.player.x > game.player.step) {
-                    game.player.x = game.player.x - upper
-                } else {
-                    game.player.x = 0
-                    clone.playAudio('wall')
-                }
-                
-                game.checkCrash(game.player, true)
-                
-                canvasObj.drawObj(game.player)
+                clone.lastway = 'left'
             }
 
             // DOWN
@@ -351,10 +338,47 @@ class Game {
 
             upper = upper + playerStep
         });
+
+        $(document).on('keyup', {'clone': clone}, function(event) {
+            log('megált érték: '+ upper);
+
+            clone.stoping = upper
+        });
+
         document.addEventListener('keyup', function(event) {
             upper = playerStep * 4
         });
 
+    }
+
+    playerLeft(upper, clone) {
+        canvasObj.deleteObj(game.player)
+
+        if (game.player.x > game.player.step) {
+            game.player.x = game.player.x - upper
+        } else {
+            game.player.x = 0
+            clone.playAudio('wall')
+        }
+        
+        game.checkCrash(game.player, true)
+        
+        canvasObj.drawObj(game.player)
+    }
+
+    playerRight(upper, clone) {
+        canvasObj.deleteObj(game.player)
+                
+        if (game.player.x + game.player.objWidth < canvasObj.canvasWidth) {
+            game.player.x = game.player.x + upper                    
+        } else {
+            game.player.x = canvasObj.canvasWidth - game.player.objWidth
+            clone.playAudio('wall')
+        }
+
+        game.checkCrash(game.player, true)
+
+        canvasObj.drawObj(game.player)
     }
 
     gameMode(clone) {
@@ -463,7 +487,13 @@ class Game {
 
             // Tégla esetén
             if (object.name == 'brick') {
-                object.strong = (nowX == true && nowY == true) ? object.strong : object.strong - 1;  // sarok nem ér
+
+                if (nowX == true && nowY == true) { // sarok nem ér
+                    this.playAudio('fart');
+                    this.stop()
+                } else {
+                    object.strong = object.strong - 1;  
+                }
     
                 if (object.strong <= 0) {
                     canvasObj.deleteObj(object)
@@ -535,24 +565,22 @@ class Game {
         }
     }
 
-    // Kell ez ?
-    speedCount() {
-        if (this.phase == true) {
-            if (this.refreshTime<=200) {
-                this.refreshTime++
-            } else {
-                this.refreshTime--
-                this.phase = false
-            }
-        } else if (this.phase == false) {
-            if (this.refreshTime>=10) {
-                this.refreshTime--
-            } else {
-                this.refreshTime++
-                this.phase = true
-            }
-        }
-        log(this.refreshTime)
+    checkPlus(value) {
+        if (value >= 0)
+            return true;
+        return false;
+    }
+
+    checkMinus(value) {
+        if (value < 0)
+            return true;
+        return false;
+    }
+
+    checkMinus(value) {
+        if (value == null)
+            return true;
+        return false;
     }
 
     drawBricks() {
@@ -580,6 +608,18 @@ class Game {
             }
         }
         
+        if (this.stoping) {
+            //log(this.stoping, this.lastway)
+
+            if (this.lastway == 'left') {
+                this.playerLeft(this.stoping, this)
+            } else if (this.lastway == 'right') {
+                this.playerRight(this.stoping, this)
+            }
+            this.stoping = this.stoping / 2
+            this.stoping = (Math.floor(this.stoping < 5)) ? false : this.stoping;
+        }
+
         game.checkCrash(game.player)
 
         //canvasObj.drawObj(game.player)   // Máshogy lehet?
@@ -607,7 +647,7 @@ function createBrickTable() {
     for (var n = 0; n < globalVar.tableX; n++) {
         for (var m = 0; m < globalVar.tableY; m++) {
 
-            let randomColor = randomNumber(0,4)
+            let randomColor = randomNumber(0,0)
             let brickColor
             let brickStrong
             if (randomColor == 0) { brickColor = 'green'; brickStrong = 1 }
