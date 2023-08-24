@@ -157,12 +157,13 @@ class Game {
     constructor() {
         globalVar.n = 0
         globalVar.menuSwitch = true
-        this.refreshTime = 1
+        this.refreshTime = 10
         this.infoDiv = $("#info-div")
         this.phase = true
         this.soundSwitch = false
         this.stoping = false
         this.lastway = null
+        this.mouseClickDown = false
 
         this.ball = new Ball({
             name: 'ball',
@@ -194,6 +195,9 @@ class Game {
             fillType: 'color',
             step: 5
         })
+
+        this.mousePlayerStep = this.player.step
+        this.mouseUpper = (this.player.step * 4)
 
         this.soundLoad()
 
@@ -252,6 +256,7 @@ class Game {
             clone.soundSwitch = !clone.soundSwitch
         })
 
+        // BUTTON VAR-s
         var playerStep = this.player.step
         var upper = (this.player.step * 4)
         
@@ -272,6 +277,8 @@ class Game {
             
             if (event.key == 'Escape') {
                 log('Escape')
+                this.stoping = false
+                this.lastway = null
                 if (globalVar.menuSwitch) {
                     globalVar.menuSwitch = false
                     clone.gameMode(clone)
@@ -293,62 +300,89 @@ class Game {
                 }
             }
 
-            // RIGHT
-            if (event.keyCode == 39) {    
+            // Game actions
+            if (globalVar.menuSwitch == false) {
+                // RIGHT
+                if (event.keyCode == 39) {    
+                    
+                    log(upper)
+    
+                    clone.playerRight(upper, clone)
+    
+                    canvasObj.drawObj(game.player)
+    
+                    clone.lastway = 'right'
+                }
                 
-                log(upper)
+                // LEFT
+                if (event.keyCode == 37) {
+    
+                    log(upper)
+    
+                    clone.playerLeft(upper, clone)
+    
+                    clone.lastway = 'left'
+                }
+    
+                // DOWN
+                if (event.keyCode == 40 ) {                
+                    canvasObj.deleteObj(game.player)
+    
+                    game.player.y = game.player.y + game.player.step
+    
+                    game.checkCrash(game.player, true)
+    
+                    canvasObj.drawObj(game.player)
+                }
+                
+                // UP
+                if (event.keyCode == 38 ) {
+                    canvasObj.deleteObj(game.player)
+                    game.player.y = game.player.y - game.player.step
+    
+                    game.checkCrash(game.player, true)
+    
+                    canvasObj.drawObj(game.player)
+                }
 
-                clone.playerRight(upper, clone)
+                // HITTING SLIDE
+                $(document).on('keyup', {'clone': clone}, function() {
+                    log('megállt érték: ' + upper);
+                    
+                    clone.stoping = upper
+                    
+                    log('mentett érték: ' + clone.stoping);
+                    
+                    upper = playerStep * 4
+                    return
+                });
 
-                canvasObj.drawObj(game.player)
-
-                clone.lastway = 'right'
             }
-            
-            // LEFT
-            if (event.keyCode == 37) {
-
-                log(upper)
-
-                clone.playerLeft(upper, clone)
-
-                clone.lastway = 'left'
-            }
-
-            // DOWN
-            if (event.keyCode == 40 ) {                
-                canvasObj.deleteObj(game.player)
-
-                game.player.y = game.player.y + game.player.step
-
-                game.checkCrash(game.player, true)
-
-                canvasObj.drawObj(game.player)
-            }
-            
-            // UP
-            if (event.keyCode == 38 ) {
-                canvasObj.deleteObj(game.player)
-                game.player.y = game.player.y - game.player.step
-
-                game.checkCrash(game.player, true)
-
-                canvasObj.drawObj(game.player)
-            }
-
             upper = upper + playerStep
         });
 
-        $(document).on('keyup', {'clone': clone}, function(event) {
-            log('megált érték: '+ upper);
+        // MOUSE USE IN GAME
+        $('#canvas-div').on('mousedown', {'clone': clone}, function(event) {
+            log('bent canvas mousedown!')
 
-            clone.stoping = upper
+            log(event.pageX + ", " + event.pageY + ")");
+            log($(document).width())
+            
+            if (event.pageX >= $(document).width() / 2) {
+                
+                game.mouseClickDown = 'right'
+
+            } else {
+                game.mouseClickDown = 'left'
+            }
         });
 
-        document.addEventListener('keyup', function(event) {
-            upper = playerStep * 4
+        $('#canvas-div').on('mouseup', function(event) {
+            log('bent canvas mouseup!')
+            game.mouseClickDown = false
+            game.mouseUpper = 0
         });
-
+        
     }
 
     playerLeft(upper, clone) {
@@ -608,17 +642,47 @@ class Game {
             }
         }
         
-        if (this.stoping) {
-            //log(this.stoping, this.lastway)
+        log(typeof this.stoping === 'number')
+
+        if (typeof this.stoping === 'number') {
+            log('--BENT!!!--')
+            log(this.stoping, this.lastway)
 
             if (this.lastway == 'left') {
                 this.playerLeft(this.stoping, this)
             } else if (this.lastway == 'right') {
                 this.playerRight(this.stoping, this)
             }
+
             this.stoping = this.stoping / 2
+            
             this.stoping = (Math.floor(this.stoping < 5)) ? false : this.stoping;
+
+            if (this.stoping == false)
+                this.lastway = null
         }
+
+            // !!!!!!!!!!!!!!!!!!!!!!!
+        log('ereeti mouseClickDown: ' + game.mouseClickDown)
+
+        if (game.mouseClickDown !== false) {
+            log('bent TRUE!!!')
+            
+            if (game.mouseClickDown == 'right') {
+                game.playerRight(game.mouseUpper, game.player)
+                canvasObj.drawObj(game.player)
+            } else if (game.mouseClickDown == 'left') {
+                game.playerLeft(game.mouseUpper, game.player)
+                canvasObj.drawObj(game.player)
+            }
+
+            game.mouseUpper = game.mouseUpper + game.mousePlayerStep
+
+            log('mouseUpper: ' + game.mouseUpper)
+        }
+
+
+
 
         game.checkCrash(game.player)
 
