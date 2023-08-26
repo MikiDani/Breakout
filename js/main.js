@@ -98,12 +98,42 @@ class CanvasClass {
     }
 
     myResizer() {
+
+        $('.page').css('width', window.innerWidth)
+        $('.page').css('height', window.innerHeight)
+
         $('#front-menu').css('width', window.innerWidth)
         $('#front-menu').css('height', window.innerHeight)
 
-        this.canvasWidth = (window.innerWidth < 1001) ? window.innerWidth : 1000;        
-        this.canvasHeight = (this.canvasWidth * 2)
+        if (window.mobileCheck()) {
+            $('#teszt').html('MOBILE: ' + window.innerWidth + ' x ' + window.innerHeight)
+        } else {
+            $('#teszt').html('DESKTOP: ' + window.innerWidth + ' x ' + window.innerHeight)
+        }
+        
+        if (window.innerHeight > (window.innerWidth * 2)) {
+            log('első H nagyobb')
+            if (window.isMobil) {
+                this.canvasWidth = window.innerWidth
+            } else {
+                this.canvasWidth = (window.innerWidth > 500) ? 500 : window.innerWidth
+            }
+            this.canvasHeight = window.innerWidth * 2
+            $('#max-display').css('width', window.innerWidth);
+        } else {
+            log('második H kisebb')
+            let infoRow = (window.innerHeight / 100) * 15
+            let gamePlace = (window.innerHeight / 100) * 85
+            log('info: '+ infoRow)
+            log('gamePlace: '+ gamePlace)
+            this.canvasHeight = gamePlace - infoRow
+            
+            //this.canvasHeight = window.innerHeight
+            this.canvasWidth = (this.canvasHeight / 2)
+            $('#max-display').css('width', this.canvasWidth);
+        }
 
+        log('-----i------');
         log('this.canvasWidth')
         log(this.canvasWidth)
         log('this.canvasHeight')
@@ -174,8 +204,6 @@ class Game {
             fillType: 'img',
             step: 3
         })
-
-        log(semmi)
 
         //log(this.ball)
         log(this.ball.x)
@@ -307,7 +335,7 @@ class Game {
                     
                     log(upper)
     
-                    clone.playerRight(upper, clone)
+                    clone.playerRight(upper)
     
                     canvasObj.drawObj(game.player)
     
@@ -319,7 +347,7 @@ class Game {
     
                     log(upper)
     
-                    clone.playerLeft(upper, clone)
+                    clone.playerLeft(upper)
     
                     clone.lastway = 'left'
                 }
@@ -362,22 +390,25 @@ class Game {
         });
 
         // MOUSE USE IN GAME
-        $('#canvas-div').on('mousedown', {'clone': clone}, function(event) {
+        $('#canvas-div').on((window.isMobil) ? 'touchstart' : 'mousedown', {'clone': clone}, function(event) {
+
             log('bent canvas mousedown!')
 
-            log(event.pageX + ", " + event.pageY + ")");
-            log($(document).width())
-            
-            if (event.pageX >= $(document).width() / 2) {
-                
-                game.mouseClickDown = 'right'
+            var posX
 
-            } else {
-                game.mouseClickDown = 'left'
+            if (window.isMobil) {
+                log('MOBIL')
+                var touch = event.originalEvent.touches[0] || event.originalEvent.changedTouches[0];
+                posX = touch.pageX
+            } else { 
+                log('DEKTOP')
+                posX = event.pageX
             }
+
+            game.mouseClickDown = (posX >= $(document).width() / 2) ? 'right' : 'left';            
         });
 
-        $('#canvas-div').on('mouseup', function(event) {
+        $('#canvas-div').on((window.isMobil) ? 'touchend' : 'mouseup', function() {
             log('bent canvas mouseup!')
             game.mouseClickDown = false
             game.mouseUpper = 0
@@ -385,14 +416,16 @@ class Game {
         
     }
 
-    playerLeft(upper, clone) {
+    playerLeft(upper) {
         canvasObj.deleteObj(game.player)
 
-        if (game.player.x > game.player.step) {
+        if (game.player.x > upper) {
             game.player.x = game.player.x - upper
         } else {
             game.player.x = 0
-            clone.playAudio('wall')
+            game.mouseClickDown = false
+            game.mouseUpper = 0
+            game.playAudio('wall')
         }
         
         game.checkCrash(game.player, true)
@@ -400,14 +433,16 @@ class Game {
         canvasObj.drawObj(game.player)
     }
 
-    playerRight(upper, clone) {
+    playerRight(upper) {
         canvasObj.deleteObj(game.player)
                 
-        if (game.player.x + game.player.objWidth < canvasObj.canvasWidth) {
+        if ((game.player.x + game.player.objWidth + upper) < canvasObj.canvasWidth) {
             game.player.x = game.player.x + upper                    
         } else {
             game.player.x = canvasObj.canvasWidth - game.player.objWidth
-            clone.playAudio('wall')
+            game.mouseClickDown = false
+            game.mouseUpper = 0
+            game.playAudio('wall')
         }
 
         game.checkCrash(game.player, true)
@@ -459,7 +494,6 @@ class Game {
     }
 
     ballMove() {
-
         this.ball.x = this.ball.x + this.ball.moveX
         this.ball.y = this.ball.y + this.ball.moveY
     }
@@ -628,7 +662,7 @@ class Game {
     }
 
     repeat = () => {
-        $("#info-div").html(globalVar.n)
+        $("#info-div").html(globalVar.n + '<br>canv.width: ' + canvasObj.canvasWidth + '<br>canv.height: ' +canvasObj.canvasHeight)
 
         canvasObj.deleteObj(game.ball)
 
@@ -642,16 +676,12 @@ class Game {
             }
         }
         
-        log(typeof this.stoping === 'number')
-
+        // KEYBOARD STOPPING
         if (typeof this.stoping === 'number') {
-            log('--BENT!!!--')
-            log(this.stoping, this.lastway)
-
             if (this.lastway == 'left') {
-                this.playerLeft(this.stoping, this)
+                this.playerLeft(this.stoping)
             } else if (this.lastway == 'right') {
-                this.playerRight(this.stoping, this)
+                this.playerRight(this.stoping)
             }
 
             this.stoping = this.stoping / 2
@@ -662,27 +692,18 @@ class Game {
                 this.lastway = null
         }
 
-            // !!!!!!!!!!!!!!!!!!!!!!!
-        log('ereeti mouseClickDown: ' + game.mouseClickDown)
-
+        // MOUSE/MOBIL STOPPING
         if (game.mouseClickDown !== false) {
-            log('bent TRUE!!!')
             
             if (game.mouseClickDown == 'right') {
-                game.playerRight(game.mouseUpper, game.player)
+                game.playerRight(game.mouseUpper)
                 canvasObj.drawObj(game.player)
             } else if (game.mouseClickDown == 'left') {
-                game.playerLeft(game.mouseUpper, game.player)
+                game.playerLeft(game.mouseUpper)
                 canvasObj.drawObj(game.player)
             }
-
             game.mouseUpper = game.mouseUpper + game.mousePlayerStep
-
-            log('mouseUpper: ' + game.mouseUpper)
         }
-
-
-
 
         game.checkCrash(game.player)
 
@@ -734,10 +755,10 @@ function createBrickTable() {
             });
             /*
             log('---'+ globalVar.brickTable[n][m].name)
-            log(globalVar.brickTable[n][m].objWidth)
-            log(globalVar.brickTable[n][m].objHeight)
             log(globalVar.brickTable[n][m].x)
             log(globalVar.brickTable[n][m].y)
+            log(globalVar.brickTable[n][m].objWidth)
+            log(globalVar.brickTable[n][m].objHeight)
             log('---');
             */
         }
@@ -750,8 +771,6 @@ function createBrickTable() {
 // START //
 ///////////
 
-var semmi = 0
-
 window.mobileCheck = function() {
     let check = false;
     (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
@@ -760,11 +779,12 @@ window.mobileCheck = function() {
 
 window.mobileCheckResize = () => {
     log('mobilcheck:' + window.mobileCheck())
-    
+
+    window.isMobil = window.mobileCheck()
+
     if(window.mobileCheck()) {
-        $('#max-display').css('width', '1000');
-    } else {
-        $('#max-display').css('width', '400');
+        // turn off mobile zooming
+        document.addEventListener('touchmove', event => event.scale !== 1 && event.preventDefault(), { passive: false });
     }
 }
 
@@ -773,8 +793,6 @@ createBrickTable()
 var game = new Game()
 
 $(window).on("resize", function() {
-
-    semmi++
 
     var canvasObj = new CanvasClass()
     var game = new Game()
