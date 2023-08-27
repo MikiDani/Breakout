@@ -111,25 +111,25 @@ class CanvasClass {
             $('#teszt').html('DESKTOP: ' + window.innerWidth + ' x ' + window.innerHeight)
         }
         
-        if (window.innerHeight > (window.innerWidth * 2)) {
+        let infoPlace = ((window.innerWidth * 2) / 100) * 10 
+
+        if (window.innerHeight > ((window.innerWidth * 2) + infoPlace)) {
             log('első H nagyobb')
             if (window.isMobil) {
                 this.canvasWidth = window.innerWidth
             } else {
-                this.canvasWidth = (window.innerWidth > 500) ? 500 : window.innerWidth
+                this.canvasWidth = (window.innerWidth > 1001) ? 1000 : window.innerWidth
             }
-            this.canvasHeight = window.innerWidth * 2
+            this.canvasHeight = Math.ceil(window.innerWidth * 2)
             $('#max-display').css('width', window.innerWidth);
         } else {
             log('második H kisebb')
-            let infoRow = (window.innerHeight / 100) * 15
-            let gamePlace = (window.innerHeight / 100) * 85
-            log('info: '+ infoRow)
-            log('gamePlace: '+ gamePlace)
-            this.canvasHeight = gamePlace - infoRow
-            
-            //this.canvasHeight = window.innerHeight
-            this.canvasWidth = (this.canvasHeight / 2)
+            let infoRow = (window.innerHeight / 100) * 5
+            let gamePlace = (window.innerHeight / 100) * 95
+
+            this.canvasHeight = Math.ceil(gamePlace - infoRow)
+            this.canvasWidth = Math.ceil((this.canvasHeight / 2))
+
             $('#max-display').css('width', this.canvasWidth);
         }
 
@@ -292,10 +292,6 @@ class Game {
 
             let clone = event.data.clone
 
-            log('first: ' + upper)
-
-            log('event.key: ' + event.key)
-
             if (event.key == 'Enter') {
                 log('ENTER')
                 if (globalVar.menuSwitch) {
@@ -332,9 +328,7 @@ class Game {
             if (globalVar.menuSwitch == false) {
                 // RIGHT
                 if (event.keyCode == 39) {    
-                    
-                    log(upper)
-    
+                
                     clone.playerRight(upper)
     
                     canvasObj.drawObj(game.player)
@@ -344,9 +338,7 @@ class Game {
                 
                 // LEFT
                 if (event.keyCode == 37) {
-    
-                    log(upper)
-    
+
                     clone.playerLeft(upper)
     
                     clone.lastway = 'left'
@@ -374,44 +366,51 @@ class Game {
                 }
 
                 // HITTING SLIDE
-                $(document).on('keyup', {'clone': clone}, function() {
-                    log('megállt érték: ' + upper);
-                    
+                $(document).on('keyup', {'clone': clone}, function() {                   
                     clone.stoping = upper
-                    
-                    log('mentett érték: ' + clone.stoping);
-                    
                     upper = playerStep * 4
-                    return
                 });
-
             }
             upper = upper + playerStep
         });
 
-        // MOUSE USE IN GAME
-        $('#canvas-div').on((window.isMobil) ? 'touchstart' : 'mousedown', {'clone': clone}, function(event) {
+        // // MOUSE USE IN GAME
+        // $('#canvas-div').on('mousedown', {'clone': clone}, function(event) {
 
-            log('bent canvas mousedown!')
+        //     log('bent canvas mousedown!')
 
-            var posX
+        //     let posX = event.pageX
+            
+        //     game.mouseClickDown = (posX >= $(document).width() / 2) ? 'right' : 'left';            
+        // });
 
-            if (window.isMobil) {
-                log('MOBIL')
-                var touch = event.originalEvent.touches[0] || event.originalEvent.changedTouches[0];
-                posX = touch.pageX
-            } else { 
-                log('DEKTOP')
-                posX = event.pageX
-            }
+        // $('#canvas-div').on('mouseup', function() {
+        //     log('bent canvas mouseup!')
+        //     game.mouseClickDown = false
+        //     game.mouseUpper = 0
+        // });
 
-            game.mouseClickDown = (posX >= $(document).width() / 2) ? 'right' : 'left';            
-        });
+        // SCREEN MOBIL
+        $('#canvas-div').on('touchstart', {'clone': clone}, function(event) {
 
-        $('#canvas-div').on((window.isMobil) ? 'touchend' : 'mouseup', function() {
-            log('bent canvas mouseup!')
-            game.mouseClickDown = false
-            game.mouseUpper = 0
+            let touch = event.originalEvent.touches[0] || event.originalEvent.changedTouches[0];
+            
+            let posX = touch.pageX
+
+            let maxX = canvasObj.canvasWidth -  (game.player.objWidth / 2)
+            
+            posX = (posX > maxX) ? maxX : posX;
+
+            canvasObj.deleteObj(game.player)
+            
+            game.player.x = posX - (game.player.objWidth / 2)
+
+            $("#info-div").html(Math.ceil(game.player.x) + ' max: ' + maxX)
+            
+            game.playAudio('wall')
+
+            canvasObj.drawObj(game.player)
+
         });
         
     }
@@ -558,7 +557,7 @@ class Game {
 
                 if (nowX == true && nowY == true) { // sarok nem ér
                     this.playAudio('fart');
-                    this.stop()
+                    //this.stop()
                 } else {
                     object.strong = object.strong - 1;  
                 }
@@ -662,7 +661,7 @@ class Game {
     }
 
     repeat = () => {
-        $("#info-div").html(globalVar.n + '<br>canv.width: ' + canvasObj.canvasWidth + '<br>canv.height: ' +canvasObj.canvasHeight)
+        //$("#info-div").html(globalVar.n + '<br>canv.width: ' + canvasObj.canvasWidth + '<br>canv.height: ' +canvasObj.canvasHeight)
 
         canvasObj.deleteObj(game.ball)
 

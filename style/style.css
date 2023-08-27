@@ -56,8 +56,8 @@ body {
 }
 
 #volume-icon {
-    width: 3rem;
-    height: 3rem;
+    width: 2rem;
+    height: 2rem;
 }
 #volume-icon:hover {
     cursor: pointer;
