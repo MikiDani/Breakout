@@ -4,36 +4,43 @@
   <meta charset="UTF-8">
   <title>BreackIn Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="style/style.css">
 </head>
   <body class="bg-dark">
-    <div class="page container d-flex justify-content-center align-items-center">
-      <div id="display-menu" style="display:block;">
-        <div class="row p-0 m-0 menu-bg d-flex justify-content-center align-items-center">
-          <div id="button-start" class="bg-success rounded px-3 shadow">Start</div>
-          <p class="text-white">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vel, officiis!</p>
-          <div id="teszt" class="text-white">teszt</div>
+    <div id="preloader">
+        <span class="loader">
+          <span class="loader-inner"></span>
+        </span>
+    </div>
+    <div id="page mx-auto">
+      <div class="container d-flex justify-content-center align-items-center">
+        <div id="display-menu" style="display:block;">
+          <div class="row p-0 m-0 menu-bg d-flex justify-content-center align-items-center">
+            <div id="button-start" class="bg-success rounded px-3 shadow">Start</div>
+            <p class="text-white">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vel, officiis!</p>
+            <div id="teszt" class="text-white">teszt</div>
+          </div>
         </div>
-      </div>
-      <div id="display-game" style="display:none;">
-        <div class="container-fluid p-0 m-0">
-          <div id="max-display" class="row p-0 m-0 mx-auto">
-            <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
-            <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball" style="display:none;">
-            <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
-            <canvas id="canvas-div" class="p-0 m-0 border border-black"></canvas>
-            <div class="row p-0 m-0 footer bg-danger p-3 d-flex justify-content-between align-items-center">
-              <div id="info-div" class="col-6 text-start">Info</div>
-              <div id="volume-icon" class="sound-on"><img src="images/sound_icon-on.svg" alt="sound-icon"></div>
+        <div id="display-game" style="display:none;">
+          <div class="container-fluid p-0 m-0">
+            <div id="max-display" class="row p-0 m-0 mx-auto">
+              <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
+              <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball" style="display:none;">
+              <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
+              <canvas id="canvas-div" class="p-0 m-0 border border-black"></canvas>
+              <div class="row p-0 m-0 footer bg-danger p-3 d-flex justify-content-between align-items-center">
+                <div id="info-div" class="col-6 text-start">Info</div>
+                <div id="volume-icon" class="sound-on"><img src="images/sound_icon-on.svg" alt="sound-icon"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div id="audios"></div>
-    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="js/main.js" defer></script>
+    <script src="modules/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="modules/jquery/dist/jquery.min.js" defer></script>
+    <script type="module" src="js/main.js" defer></script>
   </body>
 </html>

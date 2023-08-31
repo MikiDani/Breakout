@@ -181,3 +181,22 @@ if (bcY(brick.tableY-1)) {
       }
       log(this.refreshTime)
   }
+
+
+
+
+if(false){
+    function preload(arrayOfImages) {
+        $(arrayOfImages).each(function() {
+            //$('img')[0].src = this;
+            log(this)
+            //log($('img')[0].src)
+        });
+    }
+    
+    preload([
+        'images/bg01.jpg',
+        'images/ball-anim.gif',
+        'images/sound_icon-on.svg'
+    ]);
+}
