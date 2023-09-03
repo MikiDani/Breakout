@@ -116,13 +116,6 @@ export default class CanvasClass {
             }
         }
         
-        if (object.name == 'test') {
-            log('test')
-            log(object)
-            this.ctx.fillStyle = 'pink'
-            this.ctx.fillRect(object.x, object.y, object.objWidth, object.objHeight)
-        }
-
         if (object.name.includes('brick') && object.name != 'expbrick') {
             this.ctx.font = "16px Impact"
             this.ctx.fillStyle = "black"

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>BreackIn Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="stylesheet" href="modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="style/style.css">
 </head>
   <body class="bg-dark">
@@ -37,7 +37,7 @@
               <canvas id="canvas-div" class="p-0 m-0 border border-black"></canvas>
               <div class="footer row p-0 m-0 p-1">
                 <div class="col-3 score-div p-0 m-0">
-                  <span><img id="gift-life-icon" src="images/gift-life.png" alt="life-icon" title="life-icon"></strong></span><span id="life"><strong>0</strong></span>
+                  <span><img id="gift-life-icon" src="images/gift-life.png" alt="life-icon" title="life-icon"></strong></span><span id="lifes"><strong>0</strong></span>
                 </div>
                 <div class="col-6 score-div p-0 m-0">
                   <span><strong>SCORE:</strong></span><span id="score"><strong>0</strong></span>
@@ -52,8 +52,8 @@
       </div>
     </div>
     <div id="audios"></div>
-    <script src="modules/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
-    <script src="modules/jquery/dist/jquery.min.js" defer></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script type="module" src="js/main.js" defer></script>
   </body>
 </html>

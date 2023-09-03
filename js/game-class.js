@@ -8,7 +8,7 @@ export default class Game {
         this.brickTable = brickTable
         this.clockObj = null
         this.menuSwitch = true
-        this.soundSwitch = false
+        this.soundSwitch = true
         this.refreshTime = 20
         this.lifes = 3
         this.score = 0
@@ -18,14 +18,16 @@ export default class Game {
         this.stoping = false
         this.mouseClickDown = false
         this.giftArray = []
+        this.giftTime = 15000
         this.giftActiveSticky = false
         this.giftActiveLength = false
+        this.lengthIntervalActive = false
 
         this.ball = new Ball({
             name: 'ball',
             objWidth: Math.ceil((this.canvasObj.canvasWidth / 20)),
             objHeight: Math.ceil((this.canvasObj.canvasWidth / 20)),
-            x: Math.ceil((this.canvasObj.canvasWidth / 2) - (this.canvasObj.canvasWidth / 20)),
+            x: Math.ceil((this.canvasObj.canvasWidth / 2) - (this.canvasObj.canvasWidth / 20)+ 50),
             y: Math.ceil(this.canvasObj.canvasHeight - (2 * (this.canvasObj.canvasWidth / 20))),
             fillType: 'img',
             step: 3
@@ -33,14 +35,15 @@ export default class Game {
         
         let playerThick = Math.ceil((this.canvasObj.canvasHeight / 40))
         let playerSpace = Math.ceil((this.canvasObj.canvasHeight / 25))
-        let playerLong = Math.ceil((this.canvasObj.canvasWidth / 6))
+        
+        this.playerLong = Math.ceil((this.canvasObj.canvasWidth / 6))
         
         this.player = new Player({
             name: 'player',
             color: 'orange',
-            x: (this.canvasObj.canvasWidth / 2) - (playerLong / 2),
+            x: (this.canvasObj.canvasWidth / 2) - (this.playerLong / 2),
             y: (this.canvasObj.canvasHeight) - (playerSpace + playerThick),
-            objWidth: playerLong,
+            objWidth: this.playerLong,
             objHeight: playerThick,
             fillType: 'color',
             step: 5
@@ -79,6 +82,7 @@ export default class Game {
             { id: "menu2", src: "sounds/menu2.mp3" },
             { id: "fart", src: "sounds/fart.mp3" },
             { id: "boom", src: "sounds/boom.mp3" },
+            { id: "expired", src: "sounds/expired.mp3" },
         ];
     
         for  (let attribute of audioElements) {
@@ -105,7 +109,7 @@ export default class Game {
     }
 
     lifeDraw() {
-        $('#life').text(this.lifes)
+        $('#lifes').text(this.lifes)
     }
     
     myAddEventListeners() {
@@ -216,11 +220,8 @@ export default class Game {
             let clone = event.data.clone
             let posX = event.pageX
 
-            const canvPos = document.getElementById('canvas-div').getBoundingClientRect();
-
-            let rPosX = (posX - canvPos.left) 
-
-            //log((clone.player.objWidth / 2)); log(rPosX) 
+            let canvPos = document.getElementById('canvas-div').getBoundingClientRect();
+            let rPosX = (posX - canvPos.left)
 
             clone.mouseClickDown = (posX >= $(document).width() / 2) ? ['right', rPosX] : ['left', rPosX];
         });
@@ -234,9 +235,13 @@ export default class Game {
         // SCREEN USE IN MOBIL
         $('#canvas-div').on('touchstart', {'clone': clone}, function(event) {
             let clone = event.data.clone
-            let touch = event.originalEvent.touches[0] || event.originalEvent.changedTouches[0];
+            let touch = event.originalEvent.touches[0] || event.originalEvent.changedTouches[0];            
             let posX = touch.pageX
-            clone.mouseClickDown = (posX >= $(document).width() / 2) ? 'right' : 'left';
+
+            let canvPos = document.getElementById('canvas-div').getBoundingClientRect();
+            let rPosX = (posX - canvPos.left)
+
+            clone.mouseClickDown = (posX >= $(document).width() / 2) ? ['right', rPosX] : ['left', rPosX];
         });
         
         $('#canvas-div').on('touchend', {'clone': clone}, function(event) {
@@ -383,6 +388,7 @@ export default class Game {
                 if (nowX == true && nowY == true) { // sarok nem ér
                     this.playAudio('fart');
                     //this.stop()
+                    object.strong = object.strong - 1; // !! 
                 } else {
                     object.strong = object.strong - 1;  
                 }
@@ -539,6 +545,7 @@ export default class Game {
     checkPickUp(gift, giftRow) {
         if (this.checkY(gift, this.player) && this.checkX(gift, this.player)) {
             this.playAudio('pick1')
+
             this.canvasObj.deleteObj(gift)
             this.canvasObj.drawObj(this.player)
 
@@ -553,7 +560,52 @@ export default class Game {
         }
     }
 
+    giftActiveLengthAction () {
+        if (this.giftActiveLength) {
+            this.giftActiveLength = false;
+            var clone = this
+
+            function bigger() {
+                if (clone.player.x >= (clone.canvasObj.canvasWidth - (clone.playerLong * 2))) {
+                    clone.player.x = clone.canvasObj.canvasWidth - (clone.playerLong * 2)
+                } else {
+                    clone.player.x = clone.player.x - (clone.playerLong / 2)
+                }
+                clone.player.x = (clone.player.x < 0) ? 0 : clone.player.x;
+            }
+
+            function smaller() {
+                clone.player.x = clone.player.x + (clone.playerLong / 2)
+            }
+
+            var resetPlayerLength = function () {
+                clone.playAudio('expired')
+                clone.lengthIntervalActive = false
+                clone.canvasObj.deleteObj(clone.player)
+                smaller()
+                clone.player.objWidth = clone.playerLong
+                clone.canvasObj.drawObj(clone.player)
+            }
+            
+            function timeOff() {
+                resetPlayerLength()
+                if (stickyTime) { clearInterval(stickyTime) }
+            }           
+
+            this.player.objWidth = this.playerLong * 2
+            bigger()
+
+            this.canvasObj.drawObj(this.player)
+            if (this.lengthIntervalActive == false) {
+                this.lengthIntervalActive = true
+                var stickyTime = setInterval(timeOff, this.giftTime);
+            }
+        }
+    }
+
     repeat = () => {
+        this.giftActiveLengthAction()
+        
         this.canvasObj.deleteObj(this.ball)
 
         for (var n = 0; n < this.brickTable.fantomX; n++) {
@@ -582,13 +634,6 @@ export default class Game {
         //GIFTS
         var giftRow = 0;
         this.giftArray.forEach(element => {
-            //log(element)
-
-            log('this.canvasObj.objHeight: ' + this.canvasObj.canvasHeight)
-            log('element.y' + element.y)
-
-            this.checkPickUp(element, giftRow)
-
             this.canvasObj.deleteObj(element)
             element.y = element.y + element.step
             if (element.y > this.canvasObj.canvasHeight)
@@ -596,6 +641,7 @@ export default class Game {
                 this.giftArray.splice(giftRow, 1);
             } else {
                 this.canvasObj.drawObj(element)
+                this.checkPickUp(element, giftRow)
             }
             giftRow++
         });
@@ -648,7 +694,5 @@ export default class Game {
         this.ballMove()
 
         this.canvasObj.drawObj(this.ball)
-
-        //this.speedCount()
     }
 }
