@@ -19,6 +19,10 @@ body {
     display: none;
 }
 
+.container {
+    height: 100vh;
+}
+
 #preloader {
     display: flex;
     justify-content: center;
@@ -98,13 +102,31 @@ body {
     max-width: 985px;
 }
 #canvas-div:hover {
-    cursor: pointer;
+    cursor: crosshair;
 }
 
 .ball-rotate {
     position: relative;
     background-color: blue;
     animation: rotate01 6s linear infinite;
+}
+@keyframes rotate01 {
+    0%{ transform: rotate(0deg); }
+    50%{ transform: rotate(180deg); }
+    100%{ transform: rotate(360deg); }
+}
+
+.footer {
+    background-color: gray;
+}
+
+.sound-on {
+    width: 100%;
+    background-image: url("images/sound_icon-on.svg");
+    color: white;
+    background-size: cover;
+    background-color: #999999;
+    border-radius: 5px;
 }
 
 #volume-icon {
@@ -116,16 +138,12 @@ body {
     transform: scale(1.1);
 }
 
-.sound-on {
-    width: 100%;
-    background-image: url("images/sound_icon-on.svg");
-    color: white;
-    background-size: cover;
-    background-color: green;
+.animated-score {
+    color: red;
 }
 
-@keyframes rotate01 {
-    0%{ transform: rotate(0deg); }
-    50%{ transform: rotate(180deg); }
-    100%{ transform: rotate(360deg); }
+#gift-life-icon {
+    width: 1rem;
+    height: 1rem;
+    vertical-align: middle;
 }

@@ -24,14 +24,27 @@
         </div>
         <div id="display-game" style="display:none;">
           <div class="container-fluid p-0 m-0">
-            <div id="max-display" class="row p-0 m-0 mx-auto">
+            <div id="max-display" class="row p-0 m-0 d-flex justify-content-center text-align-center">
               <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
+              <img id="exp-img-1" src="images/exp01.jpg" alt="exp-1" title="exp-1" style="display:none;">
+              <img id="exp-img-2" src="images/exp02.jpg" alt="exp-2" title="exp-2" style="display:none;">
+              <img id="exp-img-3" src="images/exp03.jpg" alt="exp-3" title="exp-3" style="display:none;">
+              <img id="gift-life" src="images/gift-life.png" alt="life" title="life" style="display:none;">
+              <img id="gift-sticky" src="images/gift-sticky.png" alt="sticky" title="sticky" style="display:none;">
+              <img id="gift-length" src="images/gift-length.png" alt="length" title="length" style="display:none;">
               <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball" style="display:none;">
               <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
               <canvas id="canvas-div" class="p-0 m-0 border border-black"></canvas>
-              <div class="row p-0 m-0 footer bg-danger p-3 d-flex justify-content-between align-items-center">
-                <div id="info-div" class="col-6 text-start">Info</div>
-                <div id="volume-icon" class="sound-on"><img src="images/sound_icon-on.svg" alt="sound-icon"></div>
+              <div class="footer row p-0 m-0 p-1">
+                <div class="col-3 score-div p-0 m-0">
+                  <span><img id="gift-life-icon" src="images/gift-life.png" alt="life-icon" title="life-icon"></strong></span><span id="life"><strong>0</strong></span>
+                </div>
+                <div class="col-6 score-div p-0 m-0">
+                  <span><strong>SCORE:</strong></span><span id="score"><strong>0</strong></span>
+                </div>
+                <div id="volume-icon" class="col-2 sound-on p-0 m-0 d-flex justify-content-end">
+                  <img class="text-end" alt="sound-icon">
+                </div>
               </div>
             </div>
           </div>

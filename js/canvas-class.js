@@ -75,11 +75,9 @@ export default class CanvasClass {
             $('#max-display').css('width', this.canvasWidth);
         }
 
-        log('-----i------');
-        log('this.canvasWidth')
-        log(this.canvasWidth)
-        log('this.canvasHeight')
-        log(this.canvasHeight)
+        log('-----(i)-----');
+        log('this.canvasWidth'); log(this.canvasWidth)
+        log('this.canvasHeight'); log(this.canvasHeight)
 
         $(this.canvasDiv).attr('width', this.canvasWidth);
         $(this.canvasDiv).attr('height', this.canvasHeight);
@@ -103,13 +101,29 @@ export default class CanvasClass {
         if (object.fillType == 'img') {            
             this.ctx.drawImage(object.img, 0, 0, object.imgNaturalWidth, object.imgNaturalHeight, object.x, object.y, object.objWidth, object.objHeight)
         }
-
+        
         if (object.fillType == 'color') {
             this.ctx.fillStyle = object.color
             this.ctx.fillRect(object.x, object.y, object.objWidth, object.objHeight)
         }
+        
+        if (object.name == 'expbrick') {
+            if (object.expActive) {
+                this.ctx.drawImage(object.frame(object.expFrame), 0, 0, object.imgNaturalWidth, object.imgNaturalHeight, object.x, object.y, object.objWidth, object.objHeight)
+            } else {
+                this.ctx.fillStyle = object.color
+                this.ctx.fillRect(object.x, object.y, object.objWidth, object.objHeight)
+            }
+        }
+        
+        if (object.name == 'test') {
+            log('test')
+            log(object)
+            this.ctx.fillStyle = 'pink'
+            this.ctx.fillRect(object.x, object.y, object.objWidth, object.objHeight)
+        }
 
-        if (object.name.includes('brick')) {
+        if (object.name.includes('brick') && object.name != 'expbrick') {
             this.ctx.font = "16px Impact"
             this.ctx.fillStyle = "black"
             this.ctx.textAlign = "center"
