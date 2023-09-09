@@ -1,5 +1,3 @@
-const log = console.log;
-
 export default class CanvasClass {
     canvasDiv
     ctx
@@ -19,8 +17,6 @@ export default class CanvasClass {
         this.myResizer()
         this.checkContextDiv()  // game arena fill
         this.checkContextBg()   // bg fill
-
-        log(this.canvasWidth, this.canvasHeight)
     }
 
     checkContextDiv() {
@@ -40,7 +36,6 @@ export default class CanvasClass {
     }
 
     myResizer() {
-
         $('#page').css('width', window.innerWidth)
         $('#page').css('height', window.innerHeight)
 
@@ -56,7 +51,7 @@ export default class CanvasClass {
         let infoPlace = ((window.innerWidth * 2) / 100) * 10 
 
         if (window.innerHeight > ((window.innerWidth * 2) + infoPlace)) {
-            log('első H nagyobb')
+            // H bigger
             if (window.isMobil) {
                 this.canvasWidth = window.innerWidth
             } else {
@@ -65,7 +60,7 @@ export default class CanvasClass {
             this.canvasHeight = Math.ceil(window.innerWidth * 2)
             $('#max-display').css('width', window.innerWidth);
         } else {
-            log('második H kisebb')
+            // H smaller
             let infoRow = (window.innerHeight / 100) * 5
             let gamePlace = (window.innerHeight / 100) * 95
 
@@ -75,18 +70,11 @@ export default class CanvasClass {
             $('#max-display').css('width', this.canvasWidth);
         }
 
-        log('-----(i)-----');
-        log('this.canvasWidth'); log(this.canvasWidth)
-        log('this.canvasHeight'); log(this.canvasHeight)
-
         $(this.canvasDiv).attr('width', this.canvasWidth);
         $(this.canvasDiv).attr('height', this.canvasHeight);
 
         $(this.canvasBg).attr('width', this.canvasWidth);
         $(this.canvasBg).attr('height', this.canvasHeight);
-
-        log('width: ' + $(this.canvasDiv).attr('width'))
-        log('height: ' + $(this.canvasDiv).attr('height'))
 
         window.mobileCheckResize()
     }
@@ -116,7 +104,7 @@ export default class CanvasClass {
             }
         }
         
-        if (object.name.includes('brick') && object.name != 'expbrick') {
+        if (object.name.includes('brick') && object.name != 'expbrick' && object.name != 'wallbrick') {
             this.ctx.font = "16px Impact"
             this.ctx.fillStyle = "black"
             this.ctx.textAlign = "center"
@@ -125,7 +113,6 @@ export default class CanvasClass {
     }
 
     deleteObj(object) {
-        //this.ctx.clearRect(object.x, object.y, object.objWidth, object.objHeight);
         this.ctx.drawImage(this.canvasBg, object.x, object.y, object.objWidth, object.objHeight, object.x, object.y, object.objWidth, object.objHeight);
     }
 }

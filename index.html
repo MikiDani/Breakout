@@ -1,59 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>BreackIn Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="style/style.css">
+    <meta charset="UTF-8">
+    <title>BreackIn Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/breakin-logo.css">
 </head>
-  <body class="bg-dark">
+<body class="bg-dark">
     <div id="preloader">
         <span class="loader">
-          <span class="loader-inner"></span>
+            <span class="loader-inner"></span>
         </span>
     </div>
-    <div id="page mx-auto">
-      <div class="container d-flex justify-content-center align-items-center">
-        <div id="display-menu" style="display:block;">
-          <div class="row p-0 m-0 menu-bg d-flex justify-content-center align-items-center">
-            <div id="button-start" class="bg-success rounded px-3 shadow">Start</div>
-            <p class="text-white">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vel, officiis!</p>
-            <div id="teszt" class="text-white">teszt</div>
-          </div>
-        </div>
-        <div id="display-game" style="display:none;">
-          <div class="container-fluid p-0 m-0">
-            <div id="max-display" class="row p-0 m-0 d-flex justify-content-center text-align-center">
-              <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
-              <img id="exp-img-1" src="images/exp01.jpg" alt="exp-1" title="exp-1" style="display:none;">
-              <img id="exp-img-2" src="images/exp02.jpg" alt="exp-2" title="exp-2" style="display:none;">
-              <img id="exp-img-3" src="images/exp03.jpg" alt="exp-3" title="exp-3" style="display:none;">
-              <img id="gift-life" src="images/gift-life.png" alt="life" title="life" style="display:none;">
-              <img id="gift-sticky" src="images/gift-sticky.png" alt="sticky" title="sticky" style="display:none;">
-              <img id="gift-length" src="images/gift-length.png" alt="length" title="length" style="display:none;">
-              <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball" style="display:none;">
-              <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
-              <canvas id="canvas-div" class="p-0 m-0 border border-black"></canvas>
-              <div class="footer row p-0 m-0 p-1">
-                <div class="col-3 score-div p-0 m-0">
-                  <span><img id="gift-life-icon" src="images/gift-life.png" alt="life-icon" title="life-icon"></strong></span><span id="lifes"><strong>0</strong></span>
+    <div id="page">
+        <div class="container-fluid d-flex justify-content-center align-items-start">
+            <div id="display-menu" style="display:block;" class="mx-auto">
+                <div class="row p-0 m-0 menu-bg mx-auto">
+                    <div class="breakin-logo">
+                        <h1 data-heading="Slide">BreakIn</h1>
+                    </div>
+                    <div class="menu-box col-10 p-3 mx-auto rounded">
+                        <div class="menu-first p-0 m-0">
+                            <div id="score-box" class="bg-yellow mb-3 p-0 m-0 rounded">
+                                <span class="mes ms-2 text-white score-size">SCORE </span>
+                                <label class="mec ms-2 score-size">0</label>
+                            </div>
+                            <div id="button-start" class="me bg-green rounded shadow-lg text-center">New Game</div>
+                            <div id="button-random" class="me bg-green rounded shadow-lg text-center mt-2">RANDOM MAP</div>
+                            <div id="options" class="bg-yellow p-2 mt-3 rounded">
+                                <p class="me text-center">Options</p>
+                                <div class="mec">Game Speed</div>
+                                <div class="msd">
+                                    <input type="radio" name="speed" value="35">
+                                    <label class="mes ms-2">Snail</label><br>
+                                    <input type="radio" name="speed" value="20">
+                                    <label class="mes ms-2">Slow</label><br>
+                                    <input type="radio" name="speed" value="15" checked>
+                                    <label class="mes ms-2">Normal</label><br>
+                                    <input type="radio" name="speed" value="10">
+                                    <label class="mes ms-2">Fast</label><br>
+                                    <input type="radio" name="speed" value="5">
+                                    <label class="mes ms-2">Flash</label>
+                                </div>
+                                <div class="msd">
+                                    <input id="sound" type="checkbox" value="on" checked>
+                                    <label class="mes ms-2">Sound</label>
+                                </div>
+                            </div>
+                            <div id="button-endgame" class="me bg-danger rounded shadow-lg text-center"
+                                style="display:none;">End Game</div>
+                            <div class="button-info me mt-3 bg-green rounded text-center">Infos</div>
+                        </div>
+                        <div class="info-box col-12 p-3 mx-auto" style="display:none;">
+                            <div class="info-text w-100">
+                                <p class="info-text">This is a mini clone of the classic game BreakOut. Simple as wooden wedge. You can find three gifts in the bricks:</p>
+                                <p class="info-text"><img src="images/gift-length.png" class="gift-icon" alt="gift1">racket extension medicine</p>
+                                <p class="info-text"><img src="images/gift-sticky.png" class="gift-icon" alt="gift1">glue that sticks three times</p>
+                                <p class="info-text"><img src="images/gift-life.png" class="gift-icon" alt="gift1">extra life</p>
+                                <p class="info-text mt-2 text-center">Have fun!</p>
+                                <div class="text-center">
+                                    <span class="info-text vertical">Code:</span><span class="mec text-green">TuccMann</span>
+                                </div>
+                            </div>
+                            <div class="button-info me mt-3 bg-green rounded shadow-lg text-center">Back</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6 score-div p-0 m-0">
-                  <span><strong>SCORE:</strong></span><span id="score"><strong>0</strong></span>
-                </div>
-                <div id="volume-icon" class="col-2 sound-on p-0 m-0 d-flex justify-content-end">
-                  <img class="text-end" alt="sound-icon">
-                </div>
-              </div>
             </div>
-          </div>
+            <div id="display-game" style="display:none;">
+                <div class="container p-0 m-0">
+                    <div id="max-display" class="row p-0 m-0 d-flex justify-content-center text-align-center">
+                        <img id="bg01" src="images/bg01.jpg" alt="bg01" title="bg01" style="display:none;">
+                        <img id="wall-img" src="images/wall.jpg" alt="wall" title="wall" style="display:none;">
+                        <img id="exp-img-1" src="images/exp01.jpg" alt="exp-1" title="exp-1" style="display:none;">
+                        <img id="exp-img-2" src="images/exp02.jpg" alt="exp-2" title="exp-2" style="display:none;">
+                        <img id="exp-img-3" src="images/exp03.jpg" alt="exp-3" title="exp-3" style="display:none;">
+                        <img id="gift-life" src="images/gift-life.png" alt="life" title="life" style="display:none;">
+                        <img id="gift-sticky" src="images/gift-sticky.png" alt="sticky" title="sticky"
+                            style="display:none;">
+                        <img id="gift-length" src="images/gift-length.png" alt="length" title="length"
+                            style="display:none;">
+                        <img id="ball" src="images/ball-anim.gif" alt="ball" class="ball-rotate" title="ball"
+                            style="display:none;">
+                        <canvas id="canvas-bg" class="p-0 m-0 border border-primary" style="display:none;"></canvas>
+                        <canvas id="canvas-div" class="p-0 m-0 border border-black"></canvas>
+                        <div class="footer row p-0 m-0 p-1">
+                            <div class="col-2 score-div p-0 m-0">
+                                <span>
+                                    <img id="gift-life-icon" src="images/gift-life.png" alt="life-icon"
+                                        title="life-icon">
+                                </span>
+                                <span id="lifes" class="mec2 text-center">
+                                    <strong>0</strong>
+                                </span>
+                            </div>
+                            <div class="col-8 score-div p-0 m-0">
+                                <span class="mec2"><strong>SCORE </strong></span><span id="score" class="mec2 text-white"><strong>0</strong></span>
+                            </div>
+                            <div id="volume-icon" class="col-2 sound-on p-0 m-0 d-flex justify-content-end mt-2 ms-3">
+                                <img class="text-end" src="images/sound_icon-off.svg" alt="sound-icon">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
     <div id="audios"></div>
     <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script type="module" src="js/main.js" defer></script>
-  </body>
+    <script type="module" src="js/main.js"></script>
+</body>
 </html>

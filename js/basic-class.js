@@ -1,5 +1,3 @@
-const log = console.log;
-
 class Objects {
     constructor({name, x, y, objWidth, objHeight, fillType}) {
         this.name = name
@@ -15,8 +13,8 @@ class Ball extends Objects {
     constructor({name, x, y, objWidth, objHeight, fillType, step}) {
         super({name, x, y, objWidth, objHeight, fillType})
         this.step = step
-        this.moveX = this.step
-        this.moveY = this.step
+        this.moveX = 0 // this.step
+        this.moveY = 0 // this.step
         this.img = document.querySelector(`#${name}`)
         if (String(this.img) == 'undefined') {
             throw("Img error! I can't find " + this.name + "!")
@@ -37,6 +35,18 @@ class Brick extends Objects {
         this.firstWayX = false
         this.firstWayY = false
         this.score = strong * 10
+    }
+}
+
+class WallBrick extends Brick {
+    constructor({name, x, y, objWidth, objHeight, fillType, tableX, tableY}) {
+        super({name, x, y, objWidth, objHeight, fillType, tableX, tableY})
+        this.img = document.querySelector('#wall-img')
+        if (String(this.img) == 'undefined') {
+            throw("Img error! I can't find wall-img!")
+        }
+        this.imgNaturalWidth = this.img.naturalWidth
+        this.imgNaturalHeight = this.img.naturalHeight
     }
 }
 
@@ -70,6 +80,12 @@ class Player extends Objects {
         this.step = step
         this.firstWayX = false
         this.firstWayY = false
+        this.stickyActive = {
+            active: true,
+            catch: true,
+            piece: 1,
+            sound: false
+        }
     }
 }
 
@@ -87,4 +103,4 @@ class Gift extends Objects {
     }
 }
 
-export {Objects, Ball, Brick, Player, ExpBrick, Gift}
+export {Objects, Ball, Brick, Player, ExpBrick, WallBrick, Gift}

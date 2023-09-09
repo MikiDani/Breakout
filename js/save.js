@@ -200,3 +200,26 @@ if(false){
         'images/sound_icon-on.svg'
     ]);
 }
+
+
+//---- 
+/*
+
+checkPlus(value) {
+    if (value >= 0)
+        return true;
+    return false;
+}
+
+checkMinus(value) {
+    if (value < 0)
+        return true;
+    return false;
+}
+
+checkNull(value) {
+    if (value == null)
+        return true;
+    return false;
+}
+*/

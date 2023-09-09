@@ -1,26 +1,26 @@
-const log = console.log;
-
-import {Objects, Brick, ExpBrick} from './basic-class.js';
+import {Objects, Brick, ExpBrick, WallBrick} from './basic-class.js';
 
 export default class TableClass {
-    constructor(canvasObj) {
+    constructor(canvasObj, maps, mode, mapLevel) {
         this.canvasObj = canvasObj
         this.brickTable = []
         this.tableX = 7
         this.tableY = 24
-        this.checkPass = true
-
         this.fantomX = this.tableX + 2
         this.fantomY = this.tableY + 2
-
-        this.createBrickTable()
+        this.checkPass = true        
+        this.maps = maps
+        this.mapLevel = mapLevel
+        this.clearTable = false
+        
+        this.createBrickTable(mode)
     }
 
     randomNumber = (min, max) => {
         return  Math.floor(Math.random() * ((max + 1) - min) + min);
     }
 
-    createBrickTable() {
+    createBrickTable(mode) {
         this.brickTable = new Array(this.fantomX);
         for (var i = 0; i < this.brickTable.length; i++) {
             this.brickTable[i] = new Array(this.fantomY);
@@ -28,28 +28,44 @@ export default class TableClass {
         
         for (var n = 0; n < this.fantomX; n++) {
             for (var m = 0; m < this.fantomY; m++) {
-                
                 if (n == 0 || m == 0 || n == this.fantomX-1 || m == this.fantomY-1) {
                     this.brickTable[n][m] = null
                 } else {
-                    let randomType = this.randomNumber(0,2)
                     let brickColor
                     let brickStrong
                     let expTime
 
-                    if (randomType == 0) { brickColor = 'black'; expTime = 10 }
-                    if (randomType == 1) { brickColor = 'green'; brickStrong = 1 }
-                    if (randomType == 2) { brickColor = 'blue'; brickStrong = 2 }
-                    if (randomType == 3) { brickColor = 'purple'; brickStrong = 1 }
-                    if (randomType == 4) { brickColor = 'yellow'; brickStrong = 2 }
-                    if (randomType == 5) { brickColor = 'red'; brickStrong = 1 }
+                    let brickType
+                    let gift
+                    let giftCode
+
+                    if (mode == 'maps') {
+                        brickType = this.maps[this.mapLevel][n][m][0]
+                        giftCode = this.maps[this.mapLevel][n][m][1]
+                    } else {
+                        brickType = this.randomNumber(0, 6)
+                        giftCode = this.randomNumber(0, 3)
+                    }
+
+                    if (brickType == 0) { brickColor = 'black'; expTime = 10 }
+                    if (brickType == 1) { brickColor = 'green'; brickStrong = 1 }
+                    if (brickType == 2) { brickColor = 'blue'; brickStrong = 2 }
+                    if (brickType == 3) { brickColor = 'purple'; brickStrong = 1 }
+                    if (brickType == 4) { brickColor = 'brown'; brickStrong = 2 }
+                    if (brickType == 5) { brickColor = 'red'; brickStrong = 1 }
+                    if (brickType == 6) { }
+
+                    if (giftCode == 0) { gift = null; }
+                    if (giftCode == 1) { gift = 'life'; }
+                    if (giftCode == 2) { gift = 'sticky'; }
+                    if (giftCode == 3) { gift = 'length'; }
 
                     let brickX = Math.floor((this.canvasObj.canvasWidth / this.tableX)) * (n - 1)
                     let brickY = Math.ceil((this.canvasObj.canvasWidth / 16)) * (m - 1)
                     let brickWidth = Math.floor((this.canvasObj.canvasWidth / this.tableX))
                     let brickHeight = Math.ceil((this.canvasObj.canvasWidth / 16))
 
-                    if (randomType == 0) {
+                    if (brickType == 0) {
                         this.brickTable[n][m] = new ExpBrick({
                             name: 'expbrick',
                             x: brickX,
@@ -64,15 +80,18 @@ export default class TableClass {
                             expTime: 100,
                             expActive: false
                         });
-                    } else {
-
-                        let randomGift = this.randomNumber(0, 3)
-                        let gift
-                        if (randomGift == 0) { gift = null; }
-                        if (randomGift == 1) { gift = 'life'; }
-                        if (randomGift == 2) { gift = 'sticky'; }
-                        if (randomGift == 3) { gift = 'length'; }
-
+                    } else if (brickType == 6) {
+                        this.brickTable[n][m] = new WallBrick({
+                            name: 'wallbrick',
+                            x: brickX,
+                            y: brickY,
+                            objWidth: brickWidth,
+                            objHeight: brickHeight,
+                            fillType: 'img',
+                            tableX: n,
+                            tableY: m,
+                        });
+                    } else if (brickType == 1 || brickType == 2 || brickType == 3 || brickType == 4 ||brickType == 5) {
                         this.brickTable[n][m] = new Brick({
                             name: 'brick',
                             x: brickX,
@@ -86,21 +105,12 @@ export default class TableClass {
                             tableY: m,
                             gift: gift
                         });
+                    } else {
+                        this.brickTable[n][m] = null
                     }
-                    
-                    /*
-                    log(q + '. | n: '+ n  +' m: ' + m)
-                    log(this.brickTable[n][m].x)
-                    log(this.brickTable[n][m].y)
-                    log(this.brickTable[n][m].objWidth)
-                    log(this.brickTable[n][m].objHeight)
-                    log('---');
-                    */
                 }                
             }
         }
-
-        console.log(this.brickTable);
     }
 
     expNeighbours (object) {
@@ -129,7 +139,7 @@ export default class TableClass {
                     objHeight: object.objHeight,
                     fillType: 'color',
                     color: 'pink',
-                    strong: 0,
+                    strong: 1,
                     tableX: act.x,
                     tableY: act.y,
                     expTime: expTime,

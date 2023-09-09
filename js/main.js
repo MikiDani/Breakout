@@ -1,8 +1,7 @@
-const log = console.log;
-
 import CanvasClass from './canvas-class.js';
 import TableClass from './table-class.js';
 import GameClass from './game-class.js';
+import {maps} from './maps.js';
 
 var canvasObj
 var brickTable
@@ -29,11 +28,11 @@ $(document).ready(function() {
         }
     }
     
-    ///////////
-    // START //
-    ///////////
+    /////////////////////////////////////////////////////////
+    //TuccMann's mini game for 2023 Function | 2023.09.09. //
+    /////////////////////////////////////////////////////////
     
     canvasObj = new CanvasClass()
-    brickTable = new TableClass(canvasObj)
+    brickTable = new TableClass(canvasObj, maps, 'maps', 0)
     game = new GameClass(canvasObj, brickTable)
 });
