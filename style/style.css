@@ -245,6 +245,15 @@ p {
     transform: scale(1.1);
 }
 
+#menu-icon {
+    width: 2rem;
+    height: 2rem;
+}
+#menu-icon:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
 .animated-score {
     color: red;
 }
@@ -266,7 +275,7 @@ input[type="checkbox"] {
     font-size:3rem !important;
 }
 
-#button-endgame, .button-info, .button-start {
+#button-endgame, #button-info, .button-start {
     cursor: pointer;
 }
 
@@ -282,4 +291,14 @@ input[type="checkbox"] {
 
 .vertical {
     vertical-align: baseline;
+}
+
+#button-resume,  {
+    color: blue !important;
+    margin:50px;
+}
+
+#button-resume:hover,  {
+    cursor: pointer;
+    color: whire !important;
 }

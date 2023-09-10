@@ -7,8 +7,6 @@ var canvasObj
 var brickTable
 var game
 
-$(document).ready(function() {
-
     $("#preloader").fadeOut("slow")
     $("#page").fadeIn("slow")
     
@@ -35,4 +33,3 @@ $(document).ready(function() {
     canvasObj = new CanvasClass()
     brickTable = new TableClass(canvasObj, maps, 'maps', 0)
     game = new GameClass(canvasObj, brickTable)
-});

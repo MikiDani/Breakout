@@ -119,6 +119,7 @@ export default class Game {
             $('#button-start').hide()
             $('#button-random').hide()
 
+            $('#button-resume').show()
             $('#button-endgame').show()
             $('#score-box label').html(this.score)
             $('#score-box').show()
@@ -127,9 +128,42 @@ export default class Game {
             $('#button-start').show()
             $('#button-random').show()
 
+            $('#button-resume').hide()
             $('#button-endgame').hide()
             $('#score-box label').html(this.score)
             $('#score-box').hide()
+        }
+    }
+
+    startBall() {
+        if (this.player.stickyActive.catch == true) {
+            this.canvasObj.deleteObj(this.ball)
+            this.ball.moveY = -this.ball.step
+            this.ball.y = this.ball.y + this.ball.moveY
+            
+            this.player.stickyActive.catch = false
+            this.player.stickyActive.sound = true
+
+            this.player.stickyActive.piece--
+
+            if (this.player.stickyActive.piece <= 0) {
+                this.player.stickyActive.piece = 3
+                this.player.stickyActive.active = false
+            }
+        }
+    }
+
+    escapeAction() {
+        this.stoping = false
+        this.lastway = null
+        if (this.gameActive) {
+            if (this.menuSwitch) {
+                this.menuSwitch = false
+                this.gameMode(this)
+            } else {
+                this.menuSwitch = true
+                this.menuMode(this)
+            }
         }
     }
 
@@ -139,6 +173,14 @@ export default class Game {
         $('.breakin-logo').on('click', function() {
             location.reload()
         });
+
+        $('#menu-icon').on('click', function() {
+            clone.escapeAction()
+        })
+
+        $('#button-resume').on('click', function() {
+            clone.escapeAction()
+        })
 
         $('.button-info').on('click', function() {
             if( $('.menu-first').css('display') == 'none') {
@@ -224,21 +266,12 @@ export default class Game {
             var clone = event.data.clone
             
             if (event.key == 'Escape') {
-                clone.stoping = false
-                clone.lastway = null
-                if (clone.gameActive) {
-                    if (clone.menuSwitch) {
-                        clone.menuSwitch = false
-                        clone.gameMode(clone)
-                    } else {
-                        clone.menuSwitch = true
-                        clone.menuMode(clone)
-                    }
-                }
+                clone.escapeAction()
             }
-
+            
             // Game actions
             if (clone.menuSwitch == false && clone.lifes >= 0) {
+
                 
                 // LEFT
                 if (event.keyCode == 37) {
@@ -254,21 +287,7 @@ export default class Game {
                 }
 
                 if (event.keyCode == 32 ) {
-                    if (clone.player.stickyActive.catch == true) {
-                        clone.canvasObj.deleteObj(clone.ball)
-                        clone.ball.moveY = -clone.ball.step
-                        clone.ball.y = clone.ball.y + clone.ball.moveY
-                        
-                        clone.player.stickyActive.catch = false
-                        clone.player.stickyActive.sound = true
-
-                        clone.player.stickyActive.piece--
-
-                        if (clone.player.stickyActive.piece <= 0) {
-                            clone.player.stickyActive.piece = 3
-                            clone.player.stickyActive.active = false
-                        }
-                    }
+                    clone.startBall()
                 }
 
                 // HITTING SLIDE
@@ -295,6 +314,20 @@ export default class Game {
             let clone = event.data.clone
             clone.mouseClickDown = false
             clone.upper = 0
+        });
+
+        var touchtime = 0;
+        $("#canvas-div").on("click", function() {
+            if (touchtime == 0) {
+                touchtime = new Date().getTime();
+            } else {
+                if (((new Date().getTime()) - touchtime) < 800) {
+                    clone.startBall()
+                    touchtime = 0;
+                } else {
+                    touchtime = new Date().getTime();
+                }
+            }
         });
         
         // SCREEN USE IN MOBIL
