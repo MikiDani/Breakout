@@ -269,7 +269,7 @@ export default class Game {
                 clone.escapeAction()
             }
             
-            // Game actions
+            // GAME ACTIONS
             if (clone.menuSwitch == false && clone.lifes >= 0) {
 
                 
@@ -400,7 +400,7 @@ export default class Game {
         this.menuSwitch = false
         $('#display-menu').hide()
         $('#display-game').show()
-        // start repeat
+        // START REPEAT
         clone.start()
         clone.playAudio('menu1')
     }
@@ -409,7 +409,7 @@ export default class Game {
         this.menuSwitch = true
         $('#display-menu').show()
         $('#display-game').hide()
-        // start repeat
+        // START REPEAT
         clone.stop()
         clone.playAudio('menu2')
     }
@@ -565,13 +565,12 @@ export default class Game {
                 let rand = this.brickTable.randomNumber(0, this.randomBallVar)
                 rand ? this.playAudio('ball1') : this.playAudio('ball2');
     
-                // Tégla esetén
+                // BRICKS
                 if (object.name == 'brick' || object.name == 'expbrick') {
     
-                    if (nowX == true && nowY == true) { // sarok nem ér
+                    if (nowX == true && nowY == true) {
                         this.playAudio('fart');
-                        //this.stop()
-                        object.strong = object.strong - 1; // !! MOST ÉR AZ IS : )
+                        object.strong = object.strong - 1;
                     } else {
                         object.strong = object.strong - 1;  
                     }
@@ -627,7 +626,7 @@ export default class Game {
                         clone.ball.moveY = (clone.brickTable.randomNumber(0, 1)) ? clone.ball.step : -clone.ball.step;
                 }
 
-                let plussRandomMove = this.brickTable.randomNumber(0, this.randomBallVar)    // Igy nam lesz jó talán
+                let plussRandomMove = this.brickTable.randomNumber(0, this.randomBallVar)
                 if (nowX == true) {
                     this.ball.moveX = -this.ball.moveX + plussRandomMove;
                     this.ball.x = this.ball.x + this.ball.moveX
@@ -650,7 +649,6 @@ export default class Game {
                     let xHalfLong = (object.objWidth / 2) - (this.ball.objWidth / 2)
                                     
                     if (xHalfLong > xDistance) {
-                        //log('x elso fele')
                         let newCordinateX = object.x - this.ball.objWidth - 1
     
                         if (newCordinateX >= 0) {
@@ -658,7 +656,6 @@ export default class Game {
                             this.ball.moveX = -this.ball.step
                         }
                     } else {
-                        //log('x második fele')
                         let newCordinateX = object.x + object.objWidth + 1
     
                         if ((this.canvasObj.canvasWidth - this.ball.objWidth) >= (newCordinateX)) {
@@ -671,12 +668,10 @@ export default class Game {
                     let yHalfLong = (object.objHeight / 2)
     
                     if (yHalfLong > yDistance) {
-                        //log('y elso fele')
                         this.ball.y = object.y - this.ball.objHeight - 1
                         this.ball.moveY = -this.ball.step
                     
                     } else {
-                        //log('y második fele')
                         this.ball.y = object.y + object.objHeight + 1
                         this.ball.moveY = this.ball.step
                     }
@@ -809,7 +804,7 @@ export default class Game {
                             this.expAnim(this.brickTable.brickTable[n][m])
 
                         if (this.brickTable.brickTable[n][m] != null) {
-                            this.canvasObj.drawObj(this.brickTable.brickTable[n][m])    // Biztos csak így lehet ? újrarajzolja a téglákat !!!
+                            this.canvasObj.drawObj(this.brickTable.brickTable[n][m])
                             let expActive = this.brickTable.brickTable[n][m].expActive
                             if (typeof expActive == 'undefined' || expActive == false) {
                                 this.checkCrash(this.brickTable.brickTable[n][m])
@@ -872,7 +867,7 @@ export default class Game {
         }
 
         this.checkCrash(this.player)
-        this.canvasObj.drawObj(this.player)   // Máshogy lehet?
+        this.canvasObj.drawObj(this.player)
         this.brickTable.checkPass = true
         this.ballMapEdgeController()
         this.ballMove()
