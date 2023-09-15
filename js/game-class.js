@@ -192,7 +192,17 @@ export default class Game {
             }
         })
         
-        $('#button-start').on('click', function() {         
+        $('#button-resume').hover(
+            function() {
+                console.log('hover...')
+                $(this).addClass("menu-hover");
+            }, function() {
+                console.log('hover... el')
+                $(this).removeClass("menu-hover");
+            }
+        );
+
+        $('#button-start').on('click', function() {
             let speed = $("input[name=speed]:checked").val();
             if (speed != 'undefined' && speed != null)
                 clone.refreshTime = speed

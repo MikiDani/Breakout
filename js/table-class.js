@@ -50,9 +50,9 @@ export default class TableClass {
                     if (brickType == 0) { brickColor = 'black'; expTime = 10 }
                     if (brickType == 1) { brickColor = 'green'; brickStrong = 1 }
                     if (brickType == 2) { brickColor = 'blue'; brickStrong = 2 }
-                    if (brickType == 3) { brickColor = 'purple'; brickStrong = 1 }
-                    if (brickType == 4) { brickColor = 'brown'; brickStrong = 2 }
-                    if (brickType == 5) { brickColor = 'red'; brickStrong = 1 }
+                    if (brickType == 3) { brickColor = 'purple'; brickStrong = 3 }
+                    if (brickType == 4) { brickColor = 'brown'; brickStrong = 4 }
+                    if (brickType == 5) { brickColor = 'red'; brickStrong = 5 }
                     if (brickType == 6) { }
 
                     if (giftCode == 0) { gift = null; }
